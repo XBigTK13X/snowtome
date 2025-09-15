@@ -1,7 +1,13 @@
 import C from '../common'
 import { config } from '../settings'
 export default function LibraryListPage() {
-    const { routes, apiClient } = C.useAppContext()
+    const { authed, routes, apiClient } = C.useAppContext()
+
+    if (authed) {
+        return <C.Redirect href={routes.auth.groupList} />
+    }
+
+    return <C.Redirect href={routes.login} />
 
     const [libraryList, setLibraryList] = C.React.useState(null)
 

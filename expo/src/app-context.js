@@ -1,17 +1,20 @@
 import React from 'react';
+import * as SecureStore from 'expo-secure-store';
+
 import { config } from './settings'
 import { routes } from './routes'
 import { Modal, View } from 'react-native'
-import { ApiClient } from './api-client'
+import { KomgaClient } from './komga-client'
+import { BookloreClient } from './booklore-client'
 
-import { StaticStyle } from './snow-style'
+import { Style } from './snow-style'
 import SnowGrid from './comp/snow-grid'
 import SnowText from './comp/snow-text'
 import SnowTextButton from './comp/snow-text-button'
 
 const styles = {
     prompt: {
-        backgroundColor: StaticStyle.color.background,
+        backgroundColor: Style.color.background,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -19,10 +22,55 @@ const styles = {
     }
 }
 
+const setStoredValue = (key, value) => {
+    return new Promise(resolve => {
+        if (Platform.OS === 'web') {
+            if (value === null) {
+                localStorage.removeItem(key);
+                return resolve(true)
+            } else {
+                localStorage.setItem(key, value);
+                return resolve(true)
+            }
+        } else {
+            if (value == null) {
+                SecureStore.deleteItemAsync(key);
+                return resolve(true)
+            } else {
+                if (value === false) {
+                    value = 'false'
+                }
+                if (value === true) {
+                    value = 'true'
+                }
+                SecureStore.setItem(key, value);
+                return resolve(true)
+            }
+        }
+    })
+}
+
+const getStoredValue = (key) => {
+    let value = null
+    if (Platform.OS === 'web') {
+        value = localStorage.getItem(key)
+    } else {
+        value = SecureStore.getItem(key)
+    }
+    if (value === 'true') {
+        return true
+    }
+    if (value === 'false') {
+        return false
+    }
+    return value
+}
+
 const AppContext = React.createContext({
     config: null,
     routes: null,
-    apiClient: null
+    komga: null,
+    booklore: null
 });
 
 export function useAppContext() {
@@ -40,14 +88,18 @@ export function AppContextProvider(props) {
             setApiError(err)
         }
     }
-    const [apiClient, setApiClient] = React.useState(null)
+    const [komga, setKomga] = React.useState(null)
+    const [booklore, setBooklore] = React.useState(null)
+    const [authed, setAuthed] = React.useState(false)
 
     React.useEffect(() => {
-        if (!apiClient) {
-            setApiClient(new ApiClient({ onApiError }))
+        if (!komga) {
+            setKomga(new KomgaClient({ onApiError }))
+        }
+        if (!booklore) {
+            setBooklore(new BookloreClient({ onApiError }))
         }
     })
-
 
     if (apiError) {
         return (
@@ -68,7 +120,9 @@ export function AppContextProvider(props) {
     const appContext = {
         config,
         routes,
-        apiClient
+        komga,
+        booklore,
+        authed
     }
 
     return (

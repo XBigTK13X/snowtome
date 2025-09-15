@@ -1,75 +1,75 @@
 import React from 'react'
 import { TouchableOpacity, View } from 'react-native';
 import SnowText from './snow-text'
-import { StaticStyle } from '../snow-style'
+import { Style } from '../snow-style'
 import { Image } from 'expo-image'
 
 
 
 const styles = {
     wrapper: {
-        height: StaticStyle.imageButton.wrapper.normal.height,
-        width: StaticStyle.imageButton.wrapper.normal.width,
+        height: Style.imageButton.wrapper.normal.height,
+        width: Style.imageButton.wrapper.normal.width,
         margin: 10,
         marginLeft: 'auto',
         marginRight: 'auto',
         marginBottom: 0,
-        borderColor: StaticStyle.color.core,
+        borderColor: Style.color.core,
         borderWidth: 2,
         borderRadius: 2,
     },
     wrapperWide: {
-        height: StaticStyle.imageButton.wrapper.wide.height,
-        width: StaticStyle.imageButton.wrapper.wide.width,
+        height: Style.imageButton.wrapper.wide.height,
+        width: Style.imageButton.wrapper.wide.width,
     },
     wrapperSquare: {
-        height: StaticStyle.imageButton.wrapper.square.height,
-        width: StaticStyle.imageButton.wrapper.square.width
+        height: Style.imageButton.wrapper.square.height,
+        width: Style.imageButton.wrapper.square.width
     },
     selected: {
-        borderColor: StaticStyle.color.active
+        borderColor: Style.color.active
     },
     focused: {
-        borderColor: StaticStyle.color.hover
+        borderColor: Style.color.hover
     },
     dull: {
-        backgroundColor: StaticStyle.color.coreDark,
-        borderColor: StaticStyle.color.coreDark,
+        backgroundColor: Style.color.coreDark,
+        borderColor: Style.color.coreDark,
     },
     image: {
-        height: StaticStyle.imageButton.image.normal.height,
-        width: StaticStyle.imageButton.image.normal.width,
+        height: Style.imageButton.image.normal.height,
+        width: Style.imageButton.image.normal.width,
         marginTop: 5,
         marginLeft: 'auto',
         marginRight: 'auto'
     },
     imageWide: {
-        height: StaticStyle.imageButton.image.wide.height,
-        width: StaticStyle.imageButton.image.wide.width,
+        height: Style.imageButton.image.wide.height,
+        width: Style.imageButton.image.wide.width,
     },
     imageSquare: {
-        height: StaticStyle.imageButton.image.square.height,
-        width: StaticStyle.imageButton.image.square.width,
+        height: Style.imageButton.image.square.height,
+        width: Style.imageButton.image.square.width,
     },
     text: {
         height: 25,
-        color: StaticStyle.color.textDark,
-        fontSize: StaticStyle.imageButton.fontSize.normal,
+        color: Style.color.textDark,
+        fontSize: Style.imageButton.fontSize.normal,
         fontWeight: 'bold',
         padding: 0,
         margin: 0,
         textAlign: 'center'
     },
     smallText: {
-        fontSize: StaticStyle.imageButton.fontSize.small
+        fontSize: Style.imageButton.fontSize.small
     },
     textWrapper: {
         marginLeft: 'auto',
         marginRight: 'auto',
         width: '100%',
         height: '20%',
-        backgroundColor: StaticStyle.color.core,
-        borderColor: StaticStyle.color.core,
+        backgroundColor: Style.color.core,
+        borderColor: Style.color.core,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 2

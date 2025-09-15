@@ -1,9 +1,7 @@
 import axios from 'axios'
 
-export class ApiClient {
+export class KomgaClient {
     constructor(details) {
-        this.apiKey = '73a67b73c591473588ffdb40f13d8a50'
-        this.webApiUrl = 'http://beast.9914.us:9090/api/v1'
         this.onApiError = details.onApiError
         this.apiErrorSent = false
 
@@ -139,4 +137,4 @@ export class ApiClient {
     }
 }
 
-export default ApiClient
+export default KomgaClient

@@ -1,4 +1,4 @@
-import C from '../common'
+import C from '../../common'
 export default function SeriesListPage() {
     const { routes, apiClient } = C.useAppContext()
     const localParams = C.useLocalSearchParams()

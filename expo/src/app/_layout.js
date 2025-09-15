@@ -7,13 +7,13 @@ const styles = {
         height: 75
     },
     hr: {
-        borderBottomColor: C.StaticStyle.color.coreDark,
+        borderBottomColor: C.Style.color.coreDark,
         borderBottomWidth: 2,
     },
     page: {
         flex: 1,
         padding: 30,
-        backgroundColor: C.StaticStyle.color.background
+        backgroundColor: C.Style.color.background
     }
 }
 

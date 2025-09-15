@@ -16,7 +16,7 @@ let scaled = (input) => {
     return Math.round(input * scaleMultiplier)
 }
 
-export const StaticStyle = {
+export const Style = {
     color: {
         background: 'black',
         text: 'rgb(235, 235, 235)',
@@ -102,4 +102,4 @@ export const StaticStyle = {
 }
 
 
-export default StaticStyle
+export default Style

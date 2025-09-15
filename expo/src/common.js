@@ -29,7 +29,7 @@ import { useDebouncedCallback } from 'use-debounce';
 // TVFocusGuideView docs
 
 import util from './util'
-import { StaticStyle } from './snow-style'
+import { Style } from './snow-style'
 
 import { useAppContext } from './app-context'
 
@@ -73,7 +73,7 @@ export default {
     SnowLabel,
     SnowText,
     SnowTextButton,
-    StaticStyle,
+    Style,
     Stack,
     Text,
     TouchableOpacity,

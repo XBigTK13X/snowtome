@@ -1,4 +1,4 @@
-import C from '../common'
+import C from '../../common'
 import { TVEventHandler, useTVEventHandler } from 'react-native';
 
 import { Dimensions } from "react-native";
