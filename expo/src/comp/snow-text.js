@@ -1,6 +1,6 @@
-import { Text } from 'react-native'
+import { View, Text } from 'react-native'
 
-import { Style } from '../snow-style'
+import Style from '../snow-style'
 
 const textStyle = {
     color: Style.color.text
@@ -11,15 +11,48 @@ const normalStyle = {
     padding: 10
 }
 
+const styles = {
+    text: {
+        color: Style.color.text
+    },
+    normal: {
+        margin: 10,
+        padding: 10
+    },
+    center: {
+        width: '100%',
+        alignItems: 'center'
+    },
+    noSelect: {
+        noSelect: {
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            MozUserSelect: 'none',
+            msUserSelect: 'none',
+        }
+    }
+}
+
+
 export function SnowText(props) {
-    let styles = [textStyle]
+    let style = [textStyle]
     if (!props.shrink) {
-        styles.push(normalStyle)
+        style.push(normalStyle)
+    }
+    if (props.noSelect) {
+        style.push(styles.noSelect)
     }
     if (props.style) {
-        styles.push(props.style)
+        style.push(props.style)
     }
-    return <Text style={styles}>{props.children}</Text>
+    if (props.center) {
+        return (
+            <View style={styles.center}>
+                <Text style={style} selectable={!props.noSelect} children={props.children} />
+            </View>
+        )
+    }
+    return <Text style={style} selectable={!props.noSelect} children={props.children} />
 }
 
 export default SnowText

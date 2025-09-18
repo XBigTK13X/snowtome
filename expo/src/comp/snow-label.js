@@ -5,7 +5,8 @@ const styles = {
     label: {
         fontSize: Style.fontSize.label,
         color: Style.color.text,
-        marginTop: -20
+        margin: 10,
+        padding: 10
     },
     center: {
         alignItems: 'center',

@@ -11,7 +11,7 @@ const styles = {
         borderBottomWidth: 2,
     },
     page: {
-        flex: 1,
+        height: C.Style.window.height(),
         padding: 30,
         backgroundColor: C.Style.color.background
     }
@@ -32,13 +32,11 @@ function Header() {
 export default function RootLayout() {
     const Wrapper = C.isTV ? C.TVFocusGuideView : C.View
     return (
-        <Wrapper style={styles.page}>
-            <C.FillView scroll>
-                <AppContextProvider>
-                    <Header />
-                    <C.Slot />
-                </AppContextProvider >
-            </C.FillView>
-        </Wrapper>
+        <C.ScrollView style={styles.page}>
+            <AppContextProvider>
+                <Header />
+                <C.Slot />
+            </AppContextProvider>
+        </C.ScrollView>
     )
 }

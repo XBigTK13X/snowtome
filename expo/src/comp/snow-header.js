@@ -1,4 +1,4 @@
-import { Style } from '../snow-style'
+import Style from '../snow-style'
 import { Text } from 'react-native'
 
 const styles = {

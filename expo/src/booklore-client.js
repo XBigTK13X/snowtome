@@ -3,6 +3,16 @@ import axios from 'axios'
 export class BookloreClient {
     constructor(details) {
         this.onApiError = details.onApiError
+        this.webApiUrl = details.webApiUrl
+        if (this.webApiUrl.indexOf('http') === -1) {
+            this.webApiUrl = 'https://' + this.webApiUrl
+        }
+        if (this.webApiUrl.indexOf('/api') === -1) {
+            this.webApiUrl = this.webApiUrl + '/api/v1'
+        }
+        this.accessToken = null
+        this.refreshToken = null
+
         this.apiErrorSent = false
 
         this.httpGet = this.httpGet.bind(this)
@@ -13,15 +23,16 @@ export class BookloreClient {
         this.getPage = this.getPage.bind(this)
         this.getSeriesThumbnail = this.getSeriesThumbnail.bind(this)
 
-        const auth = `kids@kids.kids:kids`
-
         this.httpClient = axios.create({
             baseURL: this.webApiUrl,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${btoa(auth)}`
+                'Content-Type': 'application/json'
             }
         })
+
+        if (details.username) {
+            this.login(details.username, details.password)
+        }
     }
 
     handleError(err) {
@@ -70,6 +81,21 @@ export class BookloreClient {
             })
             .catch((err) => {
                 this.handleError(err)
+            })
+    }
+
+    login(username, password) {
+        this.httpPost('/auth/login', { username, password })
+            .then((response) => {
+                this.accessToken = response.accessToken
+                this.refreshToken = response.refreshToken
+                this.httpClient = axios.create({
+                    baseURL: this.webApiUrl,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + this.accessToken
+                    }
+                })
             })
     }
 

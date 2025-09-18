@@ -5,9 +5,8 @@ import { router } from 'expo-router'
 export var routes = {
     landing: '/',
     login: '/login',
-    auth: {
-        landing: '/auth/categoryList'
-    },
+    libraryList: '/auth/libraryList',
+    landing: '/auth/categoryList',
     seriesList: '/seriesList',
     bookList: '/bookList',
     bookDetails: '/bookDetails',

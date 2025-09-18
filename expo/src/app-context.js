@@ -4,7 +4,6 @@ import * as SecureStore from 'expo-secure-store';
 import { config } from './settings'
 import { routes } from './routes'
 import { Modal, View } from 'react-native'
-import { KomgaClient } from './komga-client'
 import { BookloreClient } from './booklore-client'
 
 import { Style } from './snow-style'
@@ -69,8 +68,8 @@ const getStoredValue = (key) => {
 const AppContext = React.createContext({
     config: null,
     routes: null,
-    komga: null,
-    booklore: null
+    booklore: null,
+    onLogin: null
 });
 
 export function useAppContext() {
@@ -88,18 +87,30 @@ export function AppContextProvider(props) {
             setApiError(err)
         }
     }
-    const [komga, setKomga] = React.useState(null)
     const [booklore, setBooklore] = React.useState(null)
     const [authed, setAuthed] = React.useState(false)
 
     React.useEffect(() => {
-        if (!komga) {
-            setKomga(new KomgaClient({ onApiError }))
-        }
         if (!booklore) {
-            setBooklore(new BookloreClient({ onApiError }))
+
         }
     })
+
+    const onLogin = (username, password) => {
+        booklore.login(username, password)
+            .then(() => {
+                setBooklore(new BookloreClient({
+                    onApiError,
+                    username,
+                    password
+                }))
+                setAuthed(true)
+            })
+    }
+
+    const onLogout = () => {
+
+    }
 
     if (apiError) {
         return (
@@ -120,9 +131,9 @@ export function AppContextProvider(props) {
     const appContext = {
         config,
         routes,
-        komga,
         booklore,
-        authed
+        authed,
+        onLogin
     }
 
     return (

@@ -3,12 +3,12 @@ import {
     View,
     FlatList
 } from 'react-native'
-import
-FillView from './fill-view'
+
+import FillView from './fill-view'
 
 const styles = {
     grid: {
-        marginBottom: 10
+        padding: 5
     },
     mainGrid: {
         flex: 1
@@ -22,6 +22,9 @@ const styles = {
     },
     listColumn: {
         justifyContent: 'space-evenly',
+    },
+    short: {
+        padding: 0
     }
 }
 
@@ -42,6 +45,11 @@ export function SnowGrid(props) {
     if (props.mainGrid) {
         gridStyle.push(styles.mainGrid)
     }
+
+    if (props.short) {
+        gridStyle.push(styles.short)
+    }
+
     let items = props.items
     if (!props.items) {
         // Without this, if a ternary `{x?x:null}` nullable component will leave a gap in the grid
@@ -57,8 +65,9 @@ export function SnowGrid(props) {
     if (props.renderItem) {
         renderItem = props.renderItem
     }
+    const GridView = props.shrink ? View : FillView
     return (
-        <FillView style={gridStyle}>
+        <GridView style={gridStyle}>
             <FlatList
                 scrollEnabled={props.scroll === true}
                 numColumns={itemsPerRow}
@@ -67,13 +76,13 @@ export function SnowGrid(props) {
                 data={items}
                 renderItem={({ item, index, separators }) => {
                     return (
-                        <FillView key={index} style={itemStyle}>
+                        <View key={index} style={itemStyle}>
                             {renderItem(item, index)}
-                        </FillView>
+                        </View>
                     )
                 }}
             />
-        </FillView>
+        </GridView>
     )
 }
 
