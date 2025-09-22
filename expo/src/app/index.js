@@ -3,6 +3,8 @@ import { config } from '../settings'
 export default function LibraryListPage() {
     const { authed, routes, apiClient } = C.useAppContext()
 
+    console.log({ authed })
+
     if (authed) {
         return <C.Redirect href={routes.libraryList} />
     }

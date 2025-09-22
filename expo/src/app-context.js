@@ -1,25 +1,17 @@
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
+import {
+    useStyleContext,
+    SnowModal,
+    SnowGrid,
+    SnowText,
+    SnowTextButton
+} from 'react-native-snowui'
 
 import { config } from './settings'
 import { routes } from './routes'
-import { Modal, View } from 'react-native'
+import { View } from 'react-native'
 import { BookloreClient } from './booklore-client'
-
-import { Style } from './snow-style'
-import SnowGrid from './comp/snow-grid'
-import SnowText from './comp/snow-text'
-import SnowTextButton from './comp/snow-text-button'
-
-const styles = {
-    prompt: {
-        backgroundColor: Style.color.background,
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center'
-    }
-}
 
 const setStoredValue = (key, value) => {
     return new Promise(resolve => {
@@ -81,6 +73,16 @@ export function useAppContext() {
 }
 
 export function AppContextProvider(props) {
+    const { SnowStyle } = useStyleContext(props)
+    const styles = {
+        prompt: {
+            backgroundColor: SnowStyle.color.background,
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center'
+        }
+    }
     const [apiError, setApiError] = React.useState(null)
     const onApiError = (err) => {
         if (!apiError) {
@@ -113,8 +115,9 @@ export function AppContextProvider(props) {
     }
 
     if (apiError) {
+        console.log({ apiError })
         return (
-            <Modal navigationBarTranslucent statusBarTranslucent>
+            <SnowModal navigationBarTranslucent statusBarTranslucent>
                 <View style={styles.prompt}>
                     <SnowText>Unable to communicate with Snowtome.</SnowText>
                     <SnowText>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the Snowstream server is down.</SnowText>
@@ -124,7 +127,7 @@ export function AppContextProvider(props) {
                         </SnowGrid>
                     </View>
                 </View>
-            </Modal>
+            </SnowModal>
         )
     }
 
@@ -136,8 +139,11 @@ export function AppContextProvider(props) {
         onLogin
     }
 
+    console.log({ children: props.children })
+
     return (
         <AppContext.Provider
+            style={{ flex: 1 }}
             value={appContext}
             children={props.children}
         />

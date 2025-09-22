@@ -6,7 +6,6 @@ export var routes = {
     landing: '/',
     login: '/login',
     libraryList: '/auth/libraryList',
-    landing: '/auth/categoryList',
     seriesList: '/seriesList',
     bookList: '/bookList',
     bookDetails: '/bookDetails',
@@ -53,7 +52,7 @@ routes.reset = () => {
     if (router.canDismiss()) {
         router.dismissAll()
     }
-    router.replace(routes.signIn);
+    router.replace(routes.login);
 }
 
 export function QuietReactWarning() {

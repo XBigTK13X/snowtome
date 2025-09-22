@@ -5,15 +5,6 @@ const styles = {
     header: {
         width: '100%',
         height: 75
-    },
-    hr: {
-        borderBottomColor: C.Style.color.coreDark,
-        borderBottomWidth: 2,
-    },
-    page: {
-        height: C.Style.window.height(),
-        padding: 30,
-        backgroundColor: C.Style.color.background
     }
 }
 
@@ -29,14 +20,29 @@ function Header() {
     )
 }
 
+const appStyle = {
+    color: {
+        background: 'black',
+        text: 'rgb(235, 235, 235)',
+        textDark: 'rgb(22, 22, 22)',
+        active: 'rgb(150, 150, 150)',
+        hover: 'rgb(119, 139, 255)',
+        core: 'rgb(219, 158, 44)',
+        coreDark: 'rgb(136, 98, 27)',
+        outlineDark: 'rgb(63, 63, 63)',
+        fade: 'rgb(23, 23, 23)',
+        transparentDark: 'rgba(0,0,0,0.6)',
+        panel: 'rgb(50,50,50)'
+    }
+}
+
 export default function RootLayout() {
-    const Wrapper = C.isTV ? C.TVFocusGuideView : C.View
     return (
-        <C.ScrollView style={styles.page}>
-            <AppContextProvider>
+        <C.SnowApp snowStyle={appStyle}>
+            <AppContextProvider style={{ flex: 1 }}>
                 <Header />
-                <C.Slot />
+                <C.Slot style={{ flex: 1 }} />
             </AppContextProvider>
-        </C.ScrollView>
+        </C.SnowApp>
     )
 }
