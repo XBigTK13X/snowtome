@@ -4,9 +4,6 @@ export default function LibraryListPage() {
     const { routes, onLogin } = C.useAppContext()
 
     const [form, setForm] = C.React.useState({
-        komgaUrl: '',
-        komgaUsername: '',
-        komgaPassword: '',
         bookloreUrl: '',
         bookloreUsername: '',
         booklorePassword: ''
@@ -23,19 +20,23 @@ export default function LibraryListPage() {
     }
 
     const submitLogin = () => {
-        onLogin(form.bookloreUsername, form.booklorePassword)
+        onLogin(
+            form.bookloreUrl,
+            form.bookloreUsername,
+            form.booklorePassword
+        )
     }
 
     return (
         <C.View>
             <C.SnowHeader>Booklore</C.SnowHeader>
-            <C.SnowGrid itemsPerRow={1}>
+            <C.SnowGrid itemsPerRow={2}>
                 <C.SnowLabel>Server URL</C.SnowLabel>
-                <C.SnowInput onChangeValue={changeForm('komgaUrl')} value={form.bookloreUrl} />
+                <C.SnowInput onValueChange={changeForm('bookloreUrl')} value={form.bookloreUrl} />
                 <C.SnowLabel>Username</C.SnowLabel>
-                <C.SnowInput onChangeValue={changeForm('komgaUsername')} value={form.bookloreUsername} />
+                <C.SnowInput onValueChange={changeForm('bookloreUsername')} value={form.bookloreUsername} />
                 <C.SnowLabel>Password</C.SnowLabel>
-                <C.SnowInput onChangeValue={changeForm('komgaPassword')} value={form.booklorePassword} />
+                <C.SnowInput onValueChange={changeForm('booklorePassword')} value={form.booklorePassword} />
             </C.SnowGrid>
             <C.SnowTextButton title="Login" onPress={submitLogin} />
             <C.View>

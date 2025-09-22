@@ -92,22 +92,17 @@ export function AppContextProvider(props) {
     const [booklore, setBooklore] = React.useState(null)
     const [authed, setAuthed] = React.useState(false)
 
-    React.useEffect(() => {
-        if (!booklore) {
-
-        }
-    })
-
-    const onLogin = (username, password) => {
-        booklore.login(username, password)
-            .then(() => {
-                setBooklore(new BookloreClient({
-                    onApiError,
-                    username,
-                    password
-                }))
-                setAuthed(true)
-            })
+    const onLogin = (webApiUrl, username, password) => {
+        const client = new BookloreClient({
+            onApiError,
+            webApiUrl,
+            username,
+            password
+        })
+        client.login(username, password).then(() => {
+            setAuthed(true)
+            setBooklore(client)
+        })
     }
 
     const onLogout = () => {
@@ -115,7 +110,6 @@ export function AppContextProvider(props) {
     }
 
     if (apiError) {
-        console.log({ apiError })
         return (
             <SnowModal navigationBarTranslucent statusBarTranslucent>
                 <View style={styles.prompt}>
@@ -138,8 +132,6 @@ export function AppContextProvider(props) {
         authed,
         onLogin
     }
-
-    console.log({ children: props.children })
 
     return (
         <AppContext.Provider

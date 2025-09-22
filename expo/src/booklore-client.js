@@ -29,10 +29,6 @@ export class BookloreClient {
                 'Content-Type': 'application/json'
             }
         })
-
-        if (details.username) {
-            this.login(details.username, details.password)
-        }
     }
 
     handleError(err) {
@@ -85,18 +81,21 @@ export class BookloreClient {
     }
 
     login(username, password) {
-        this.httpPost('/auth/login', { username, password })
-            .then((response) => {
-                this.accessToken = response.accessToken
-                this.refreshToken = response.refreshToken
-                this.httpClient = axios.create({
-                    baseURL: this.webApiUrl,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.accessToken
-                    }
+        return new Promise((resolve) => {
+            return this.httpPost('/auth/login', { username, password })
+                .then((response) => {
+                    this.accessToken = response.accessToken
+                    this.refreshToken = response.refreshToken
+                    this.httpClient = axios.create({
+                        baseURL: this.webApiUrl,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + this.accessToken
+                        }
+                    })
+                    return resolve(this)
                 })
-            })
+        })
     }
 
     imageSource(webPath) {

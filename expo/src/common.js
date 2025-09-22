@@ -30,6 +30,7 @@ import util from './util'
 import { useAppContext } from './app-context'
 
 import {
+    SnowApp,
     SnowFillView,
     SnowGrid,
     SnowHeader,
@@ -64,6 +65,7 @@ export default {
     Redirect,
     ScrollView,
     Slot,
+    SnowApp,
     SnowGrid,
     SnowHeader,
     SnowImageButton,
