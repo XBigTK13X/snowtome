@@ -6,7 +6,7 @@ import {
     SnowGrid,
     SnowText,
     SnowTextButton
-} from 'react-native-snowui'
+} from 'expo-snowui'
 
 import { config } from './settings'
 import { routes } from './routes'
@@ -93,15 +93,20 @@ export function AppContextProvider(props) {
     const [authed, setAuthed] = React.useState(false)
 
     const onLogin = (webApiUrl, username, password) => {
+        console.log({ webApiUrl, username, password })
         const client = new BookloreClient({
             onApiError,
             webApiUrl,
             username,
             password
         })
-        client.login(username, password).then(() => {
+        console.log({ client })
+        client.login(username, password).then((response) => {
+            console.log({ response })
             setAuthed(true)
             setBooklore(client)
+        }).catch(err => {
+            console.log({ err })
         })
     }
 
@@ -114,7 +119,7 @@ export function AppContextProvider(props) {
             <SnowModal navigationBarTranslucent statusBarTranslucent>
                 <View style={styles.prompt}>
                     <SnowText>Unable to communicate with Snowtome.</SnowText>
-                    <SnowText>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the Snowstream server is down.</SnowText>
+                    <SnowText>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the snowtome server is down.</SnowText>
                     <View>
                         <SnowGrid itemsPerRow={2}>
                             <SnowTextButton title="Try to Reload" onPress={() => { setApiError(null) }} />

@@ -1,7 +1,8 @@
 import C from '../common'
 import { config } from '../settings'
 export default function LibraryListPage() {
-    const { routes, onLogin } = C.useAppContext()
+    const { routes, onLogin, authed } = C.useAppContext()
+    const { navPush } = C.useSnowContext()
 
     const [form, setForm] = C.React.useState({
         bookloreUrl: '',
@@ -20,12 +21,21 @@ export default function LibraryListPage() {
     }
 
     const submitLogin = () => {
+        console.log({ form })
         onLogin(
             form.bookloreUrl,
             form.bookloreUsername,
             form.booklorePassword
         )
     }
+
+    console.log({ authed })
+
+    C.React.useEffect(() => {
+        if (authed) {
+            navPush({ path: routes.libraryList, func: false })
+        }
+    }, [authed])
 
     return (
         <C.View>

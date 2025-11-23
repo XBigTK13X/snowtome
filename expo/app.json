@@ -4,16 +4,7 @@
       [
         "@react-native-tvos/config-tv",
         {
-          "androidTVBanner": "./assets/icon/android/tvbanner.png",
-          "appleTVImages": {
-            "icon": "./assets/images/icon-1280x768.png",
-            "iconSmall": "./assets/images/icon-400x240.png",
-            "iconSmall2x": "./assets/images/icon-800x480.png",
-            "topShelf": "./assets/images/icon-1920x720.png",
-            "topShelf2x": "./assets/images/icon-3840x1440.png",
-            "topShelfWide": "./assets/images/icon-2320x720.png",
-            "topShelfWide2x": "./assets/images/icon-4640x1440.png"
-          }
+          "androidTVBanner": "./assets/icon/android/tvbanner.png"
         }
       ],
       [
@@ -25,11 +16,20 @@
           "ios": {}
         }
       ],
-      "expo-router"
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://bugsink.9914.us",
+          "project": "snowstream",
+          "organization": "Arctic"
+        }
+      ]
     ],
     "android": {
       "edgeToEdgeEnabled": true,
-      "package": "com.simplepathstudios.snowtome"
+      "package": "com.simplepathstudios.snowtome",
+      "backgroundColor": "#000000",
+      "versionCode": 1
     },
     "ios": {
       "bundleIdentifier": "com.simplepathstudios.snowtome"

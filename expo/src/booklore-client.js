@@ -15,14 +15,6 @@ export class BookloreClient {
 
         this.apiErrorSent = false
 
-        this.httpGet = this.httpGet.bind(this)
-        this.httpPost = this.httpPost.bind(this)
-        this.httpDelete = this.httpDelete.bind(this)
-
-        this.imageSource = this.imageSource.bind(this)
-        this.getPage = this.getPage.bind(this)
-        this.getSeriesThumbnail = this.getSeriesThumbnail.bind(this)
-
         this.httpClient = axios.create({
             baseURL: this.webApiUrl,
             headers: {
@@ -31,7 +23,7 @@ export class BookloreClient {
         })
     }
 
-    handleError(err) {
+    handleError = (err) => {
         console.log({ err })
         if (err) {
             if (err.code && err.code === 'ERR_NETWORK') {
@@ -43,7 +35,7 @@ export class BookloreClient {
         }
     }
 
-    async httpGet(url, params) {
+    httpGet = async (url, params) => {
         let queryParams = null
         if (params) {
             queryParams = { params: params }
@@ -58,7 +50,7 @@ export class BookloreClient {
             })
     }
 
-    async httpPost(url, payload) {
+    httpPost = async (url, payload) => {
         return this.httpClient
             .post(url, payload)
             .then((response) => {
@@ -69,7 +61,7 @@ export class BookloreClient {
             })
     }
 
-    async httpDelete(url) {
+    httpDelete = async (url) => {
         return this.httpClient
             .delete(url)
             .then((response) => {
@@ -80,7 +72,7 @@ export class BookloreClient {
             })
     }
 
-    login(username, password) {
+    login = (username, password) => {
         return new Promise((resolve) => {
             return this.httpPost('/auth/login', { username, password })
                 .then((response) => {
@@ -98,7 +90,7 @@ export class BookloreClient {
         })
     }
 
-    imageSource(webPath) {
+    imageSource = (webPath) => {
         const uri = `${this.webApiUrl}${webPath}`
         return {
             uri: uri,
@@ -109,7 +101,7 @@ export class BookloreClient {
         }
     }
 
-    getLibraryList() {
+    getLibraryList = () => {
         return this.httpGet("/libraries")
     }
 
@@ -127,11 +119,11 @@ export class BookloreClient {
         return this.httpPost(`/series/list?page=0&size=500&sort=metadata.titleSort,asc`, payload)
     }
 
-    getSeriesThumbnail(seriesId) {
+    getSeriesThumbnail = (seriesId) => {
         return this.imageSource(`/series/${seriesId}/thumbnail`)
     }
 
-    getBookList(seriesId) {
+    getBookList = (seriesId) => {
         const payload = {
             "condition": {
                 "allOf": [{
@@ -145,19 +137,19 @@ export class BookloreClient {
         return this.httpPost(`/books/list?page=0&size=500&sort=metadata.numberSort,asc`, payload)
     }
 
-    getBookThumbnail(bookId) {
+    getBookThumbnail = (bookId) => {
         return this.imageSource(`/books/${bookId}/thumbnail`)
     }
 
-    getPageList(bookId) {
+    getPageList = (bookId) => {
         return this.httpGet(`books/${bookId}/pages`)
     }
 
-    getPage(bookId, pageNumber) {
+    getPage = (bookId, pageNumber) => {
         return this.imageSource(`/books/${bookId}/pages/${pageNumber}`)
     }
 
-    debug() {
+    debug = () => {
         console.log({ webApiUrl: this.webApiUrl, apiKey: this.apiKey })
     }
 }
