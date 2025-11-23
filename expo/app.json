@@ -23,7 +23,8 @@
           "project": "snowstream",
           "organization": "Arctic"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "android": {
       "edgeToEdgeEnabled": true,

@@ -1,61 +1,10 @@
 import React from 'react';
-import * as SecureStore from 'expo-secure-store';
-import {
-    useStyleContext,
-    SnowModal,
-    SnowGrid,
-    SnowText,
-    SnowTextButton
-} from 'expo-snowui'
+import Snow from 'expo-snowui'
 
 import { config } from './settings'
 import { routes } from './routes'
 import { View } from 'react-native'
 import { BookloreClient } from './booklore-client'
-
-const setStoredValue = (key, value) => {
-    return new Promise(resolve => {
-        if (Platform.OS === 'web') {
-            if (value === null) {
-                localStorage.removeItem(key);
-                return resolve(true)
-            } else {
-                localStorage.setItem(key, value);
-                return resolve(true)
-            }
-        } else {
-            if (value == null) {
-                SecureStore.deleteItemAsync(key);
-                return resolve(true)
-            } else {
-                if (value === false) {
-                    value = 'false'
-                }
-                if (value === true) {
-                    value = 'true'
-                }
-                SecureStore.setItem(key, value);
-                return resolve(true)
-            }
-        }
-    })
-}
-
-const getStoredValue = (key) => {
-    let value = null
-    if (Platform.OS === 'web') {
-        value = localStorage.getItem(key)
-    } else {
-        value = SecureStore.getItem(key)
-    }
-    if (value === 'true') {
-        return true
-    }
-    if (value === 'false') {
-        return false
-    }
-    return value
-}
 
 const AppContext = React.createContext({
     config: null,
@@ -73,7 +22,7 @@ export function useAppContext() {
 }
 
 export function AppContextProvider(props) {
-    const { SnowStyle } = useStyleContext(props)
+    const { SnowStyle } = Snow.useSnowContext(props)
     const styles = {
         prompt: {
             backgroundColor: SnowStyle.color.background,
@@ -93,49 +42,68 @@ export function AppContextProvider(props) {
     const [authed, setAuthed] = React.useState(false)
 
     const onLogin = (webApiUrl, username, password) => {
-        console.log({ webApiUrl, username, password })
         const client = new BookloreClient({
             onApiError,
             webApiUrl,
             username,
             password
         })
-        console.log({ client })
         client.login(username, password).then((response) => {
-            console.log({ response })
+            Snow.saveData('bookloreAuth', JSON.stringify({
+                refreshToken: client.refreshToken,
+                accessToken: client.accessToken,
+                username,
+                webApiUrl: webApiUrl
+            }))
             setAuthed(true)
             setBooklore(client)
-        }).catch(err => {
-            console.log({ err })
         })
     }
 
     const onLogout = () => {
-
+        Snow.saveData('bookloreAuth', null)
+        setBooklore(null)
+        setAuthed(false)
     }
+
+    React.useEffect(() => {
+        let bookloreAuth = Snow.loadData('bookloreAuth')
+        if (bookloreAuth) {
+            bookloreAuth = JSON.parse(bookloreAuth)
+            const client = new BookloreClient({
+                onApiError,
+                webApiUrl: bookloreAuth.webApiUrl,
+                accessToken: bookloreAuth.accessToken,
+                refreshToken: bookloreAuth.refreshToken
+            })
+            setBooklore(client)
+            setAuthed(true)
+        }
+    }, [])
 
     if (apiError) {
         return (
-            <SnowModal navigationBarTranslucent statusBarTranslucent>
+            <Snow.Modal navigationBarTranslucent statusBarTranslucent>
                 <View style={styles.prompt}>
-                    <SnowText>Unable to communicate with Snowtome.</SnowText>
-                    <SnowText>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the snowtome server is down.</SnowText>
+                    <Snow.Text>Unable to communicate with Snowtome.</Snow.Text>
+                    <Snow.Text>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the snowtome server is down.</Snow.Text>
                     <View>
-                        <SnowGrid itemsPerRow={2}>
-                            <SnowTextButton title="Try to Reload" onPress={() => { setApiError(null) }} />
-                        </SnowGrid>
+                        <Snow.Grid itemsPerRow={2}>
+                            <Snow.TextButton title="Try to Reload" onPress={() => { setApiError(null) }} />
+                        </Snow.Grid>
                     </View>
                 </View>
-            </SnowModal>
+            </Snow.Modal>
         )
     }
 
     const appContext = {
         config,
         routes,
-        booklore,
+        bookloreClient: booklore,
         authed,
-        onLogin
+        onLogin,
+        onLogout
     }
 
     return (

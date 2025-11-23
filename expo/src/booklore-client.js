@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+// https://booklore.9914.us/api/v1/swagger-ui/index.html
+
 export class BookloreClient {
     constructor(details) {
         this.onApiError = details.onApiError
@@ -10,17 +12,30 @@ export class BookloreClient {
         if (this.webApiUrl.indexOf('/api') === -1) {
             this.webApiUrl = this.webApiUrl + '/api/v1'
         }
-        this.accessToken = null
-        this.refreshToken = null
-
         this.apiErrorSent = false
 
-        this.httpClient = axios.create({
-            baseURL: this.webApiUrl,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        this.accessToken = null
+        this.refreshToken = null
+        this.username = details?.username
+        if (details?.accessToken) {
+            this.accessToken = details.accessToken
+            this.refreshToken = details.refreshToken
+            this.httpClient = axios.create({
+                baseURL: this.webApiUrl,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + details.accessToken
+                }
+            })
+        } else {
+            this.httpClient = axios.create({
+                baseURL: this.webApiUrl,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+
     }
 
     handleError = (err) => {
@@ -96,13 +111,48 @@ export class BookloreClient {
             uri: uri,
             method: 'GET',
             headers: {
-                'X-API-Key': this.apiKey
+                'Authorization': 'Bearer ' + this.accessToken
             }
         }
     }
 
     getLibraryList = () => {
-        return this.httpGet("/libraries")
+        return new Promise((resolve) => {
+            return this.httpGet("/libraries")
+                .then((response) => {
+                    if (response) {
+                        response.sort((a, b) => {
+                            const nameA = a.name.toLowerCase();
+                            const nameB = b.name.toLowerCase();
+
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                        return resolve(response)
+                    }
+                    return resolve(null)
+                })
+        })
+    }
+
+    getBookListByLibrary = (libraryId) => {
+        return new Promise((resolve) => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.filter((item) => {
+                            return item.libraryId === libraryId
+                        });
+                        return resolve(result)
+                    }
+                    return resolve(null)
+                })
+        })
     }
 
     getSeriesList(libraryId) {
@@ -138,7 +188,7 @@ export class BookloreClient {
     }
 
     getBookThumbnail = (bookId) => {
-        return this.imageSource(`/books/${bookId}/thumbnail`)
+        return `${this.webApiUrl}/media/book/${bookId}/thumbnail?token=${this.accessToken}`
     }
 
     getPageList = (bookId) => {

@@ -21,15 +21,12 @@ export default function LibraryListPage() {
     }
 
     const submitLogin = () => {
-        console.log({ form })
         onLogin(
             form.bookloreUrl,
             form.bookloreUsername,
             form.booklorePassword
         )
     }
-
-    console.log({ authed })
 
     C.React.useEffect(() => {
         if (authed) {
