@@ -6,25 +6,24 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 export default function BookDetailsPage() {
-    const { routes, apiClient } = C.useAppContext()
-    const localParams = C.useLocalSearchParams()
-    const [pages, setPages] = C.React.useState(null)
-    const [showTwoPages, setShowTwoPages] = C.React.useState(false)
-    const [pageNumber, setPageNumber] = C.React.useState(1)
-    const pageNumberRef = C.React.useRef(1)
-    const maxPageNumberRef = C.React.useRef(2)
-    const [showCount, setShowCount] = C.React.useState(false)
+    console.log("What")
+    const { routes, bookloreClient } = C.useAppContext()
+    const { currentRoute } = C.useSnowContext()
+    // const [pages, setPages] = C.React.useState(null)
+    // const [showTwoPages, setShowTwoPages] = C.React.useState(false)
+    // const [pageNumber, setPageNumber] = C.React.useState(1)
+    // const pageNumberRef = C.React.useRef(1)
+    // const maxPageNumberRef = C.React.useRef(2)
+    // const [showCount, setShowCount] = C.React.useState(false)
 
     C.React.useEffect(() => {
-        if (!pages) {
-            apiClient.getPageList(localParams.bookId).then((response) => {
-                setPages(response)
-                maxPageNumberRef.current = response.length
-            })
+        bookloreClient.getBookDetails(currentRoute.routeParams.bookId).then((response) => {
+            console.log({ response })
+        })
+    }, [])
 
-        }
-    })
 
+    return <C.SnowText>What</C.SnowText>
 
     const myTVEventHandler = evt => {
         const page = pageNumberRef.current

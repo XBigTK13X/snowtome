@@ -155,6 +155,15 @@ export class BookloreClient {
         })
     }
 
+    getBookDetails = (bookId) => {
+        return new Promise((resolve) => {
+            return this.httpGet(`/books/${bookId}`)
+                .then((response) => {
+                    resolve(response)
+                })
+        })
+    }
+
     getSeriesList(libraryId) {
         const payload = {
             "condition": {
