@@ -27,7 +27,10 @@ export default function BookDetailsPage() {
             <ReactReader
                 url={bookContent}
                 location={location}
-                locationChanged={(epubcfi) => setLocation(epubcfi)}
+                locationChanged={(epubcfi) => {
+                    console.log(epubcfi)
+                    setLocation(epubcfi)
+                }}
                 epubInitOptions={{ openAs: "binary" }}
             />
         </div>

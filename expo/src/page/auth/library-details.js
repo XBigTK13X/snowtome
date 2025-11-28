@@ -14,8 +14,6 @@ export default function LibraryDetailsPage() {
         return <C.SnowText>Loading books in {currentRoute?.routeParams?.libraryName}...</C.SnowText>
     }
 
-    console.log({ routes })
-
     return (
         <>
             <C.SnowLabel center>Books [{bookList?.length}]</C.SnowLabel>
