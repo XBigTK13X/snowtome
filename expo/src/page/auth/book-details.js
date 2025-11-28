@@ -9,6 +9,9 @@ export default function BookDetailsPage() {
     console.log("What")
     const { routes, bookloreClient } = C.useAppContext()
     const { currentRoute } = C.useSnowContext()
+
+    const [bookInfo, setBookInfo] = C.React.useState(null)
+    const [bookContent, setBookContent] = C.React.useState(null)
     // const [pages, setPages] = C.React.useState(null)
     // const [showTwoPages, setShowTwoPages] = C.React.useState(false)
     // const [pageNumber, setPageNumber] = C.React.useState(1)
@@ -18,10 +21,14 @@ export default function BookDetailsPage() {
 
     C.React.useEffect(() => {
         bookloreClient.getBookDetails(currentRoute.routeParams.bookId).then((response) => {
-            console.log({ response })
+            setBookInfo(response)
+            return bookloreClient.getBookContent(currentRoute.routeParams.bookId)
+        }).then((response) => {
+            setBookContent(response)
         })
     }, [])
 
+    console.log({ bookContent, bookInfo })
 
     return <C.SnowText>What</C.SnowText>
 

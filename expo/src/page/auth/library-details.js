@@ -14,6 +14,8 @@ export default function LibraryDetailsPage() {
         return <C.SnowText>Loading books in {currentRoute?.routeParams?.libraryName}...</C.SnowText>
     }
 
+    console.log({ routes })
+
     return (
         <>
             <C.SnowLabel center>Books [{bookList?.length}]</C.SnowLabel>
@@ -23,7 +25,7 @@ export default function LibraryDetailsPage() {
                     title={item?.metadata?.title}
                     imageUrl={thumbnail}
                     onPress={navPush({
-                        route: routes.bookDetails,
+                        path: routes.bookDetails,
                         params: {
                             libraryId: item.libraryId,
                             libraryName: item.libraryName,

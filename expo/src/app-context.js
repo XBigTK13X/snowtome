@@ -22,7 +22,7 @@ export function useAppContext() {
 }
 
 export function AppContextProvider(props) {
-    const { SnowStyle } = Snow.useSnowContext(props)
+    const { SnowStyle, pushModal, popModal } = Snow.useSnowContext(props)
     const styles = {
         prompt: {
             backgroundColor: SnowStyle.color.background,
@@ -81,21 +81,31 @@ export function AppContextProvider(props) {
         }
     }, [])
 
-    if (apiError) {
-        return (
-            <Snow.Modal navigationBarTranslucent statusBarTranslucent>
-                <View style={styles.prompt}>
-                    <Snow.Text>Unable to communicate with Snowtome.</Snow.Text>
-                    <Snow.Text>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the snowtome server is down.</Snow.Text>
-                    <View>
-                        <Snow.Grid itemsPerRow={2}>
-                            <Snow.TextButton title="Try to Reload" onPress={() => { setApiError(null) }} />
-                        </Snow.Grid>
-                    </View>
-                </View>
-            </Snow.Modal>
-        )
-    }
+    React.useEffect(() => {
+        if (apiError) {
+            pushModal({
+                props: {
+                    focusLayer: 'api-error',
+                    onRequestClose: onLogout
+                },
+                render: () => {
+                    return (
+                        <View style={styles.prompt}>
+                            <Snow.Text>Unable to communicate with Snowtome.</Snow.Text>
+                            <Snow.Text>Check if your Wi-Fi is disconnected, ethernet unplugged, or if the snowtome server is down.</Snow.Text>
+                            <Snow.Grid itemsPerRow={2}>
+                                <Snow.TextButton title="Reload" onPress={() => { setApiError(null) }} />
+                                <Snow.TextButton title="Logout" onPress={() => { onLogout() }} />
+                            </Snow.Grid>
+                        </View>
+                    )
+                }
+            })
+            return () => {
+                popModal()
+            }
+        }
+    }, [apiError])
 
     const appContext = {
         config,

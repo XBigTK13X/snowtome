@@ -35,13 +35,12 @@ export class BookloreClient {
                 }
             })
         }
-
     }
 
     handleError = (err) => {
         console.log({ err })
         if (err) {
-            if (err.code && err.code === 'ERR_NETWORK') {
+            if (err?.code === 'ERR_NETWORK' || err?.code === 'ERR_BAD_REQUEST') {
                 if (!this.apiErrorSent) {
                     this.onApiError(err)
                 }
@@ -206,6 +205,24 @@ export class BookloreClient {
 
     getPage = (bookId, pageNumber) => {
         return this.imageSource(`/books/${bookId}/pages/${pageNumber}`)
+    }
+
+    downloadBook = (bookId) => {
+        return this.httpGet(`/books/${bookId}/download`)
+    }
+
+    getBookContent = (bookId) => {
+        return this.httpGet(`/books/${bookId}/content`)
+    }
+
+    updateBookProgress = (bookId, percent) => {
+        // for epub
+        let payload = {
+            epubProgress: {
+                percentage: percent
+            }
+        }
+        return this.httpPost(`/books/${bookId}/progress`, payload)
     }
 
     debug = () => {
