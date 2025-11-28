@@ -23,7 +23,7 @@ import util from './util'
 
 import { useAppContext } from './app-context'
 
-import {
+import Snow, {
     SnowApp,
     SnowFillView,
     SnowGrid,
@@ -40,6 +40,7 @@ const isAndroid = Platform.OS === 'android'
 const isTV = Platform.isTV
 
 export default {
+    Snow,
     isAndroid,
     isTV,
     isWeb,

@@ -212,7 +212,12 @@ export class BookloreClient {
     }
 
     getBookContent = (bookId) => {
-        return this.httpGet(`/books/${bookId}/content`)
+        const bookUrl = `/books/${bookId}/download`
+        return this.httpClient.get(bookUrl, {
+            responseType: 'arraybuffer',
+        }).then((response) => {
+            return response.data
+        })
     }
 
     updateBookProgress = (bookId, percent) => {

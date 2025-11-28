@@ -1,23 +1,13 @@
 import C from '../../common'
-import { TVEventHandler, useTVEventHandler } from 'react-native';
-
-import { Dimensions } from "react-native";
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+import { ReactReader } from 'react-reader'
 
 export default function BookDetailsPage() {
-    console.log("What")
-    const { routes, bookloreClient } = C.useAppContext()
+    const { bookloreClient } = C.useAppContext()
     const { currentRoute } = C.useSnowContext()
 
     const [bookInfo, setBookInfo] = C.React.useState(null)
     const [bookContent, setBookContent] = C.React.useState(null)
-    // const [pages, setPages] = C.React.useState(null)
-    // const [showTwoPages, setShowTwoPages] = C.React.useState(false)
-    // const [pageNumber, setPageNumber] = C.React.useState(1)
-    // const pageNumberRef = C.React.useRef(1)
-    // const maxPageNumberRef = C.React.useRef(2)
-    // const [showCount, setShowCount] = C.React.useState(false)
+    const [location, setLocation] = C.React.useState(0)
 
     C.React.useEffect(() => {
         bookloreClient.getBookDetails(currentRoute.routeParams.bookId).then((response) => {
@@ -28,99 +18,19 @@ export default function BookDetailsPage() {
         })
     }, [])
 
-    console.log({ bookContent, bookInfo })
-
-    return <C.SnowText>What</C.SnowText>
-
-    const myTVEventHandler = evt => {
-        const page = pageNumberRef.current
-        const max = maxPageNumberRef.current
-        const diff = showTwoPages ? 2 : 1
-        if (evt.eventType === 'right' || evt.eventType === 'select') {
-            if (page < max) {
-                pageNumberRef.current += diff
-                setPageNumber(page + diff)
-            }
-            else {
-                routes.back()
-            }
-        }
-        else if (evt.eventType === 'left') {
-            if (page > 1) {
-                pageNumberRef.current -= diff
-                setPageNumber(page - diff)
-            }
-            else {
-                routes.back()
-            }
-        }
-        else if (evt.eventType === 'up') {
-            setShowTwoPages(!showTwoPages)
-        }
-        else if (evt.eventType === 'down') {
-            setShowCount(!showCount)
-        }
-    };
-
-
-    if (C.isTV) {
-        useTVEventHandler(myTVEventHandler);
-    }
-
-
-    if (!pages) {
-        return <C.SnowText>Loading pages...</C.SnowText>
-    }
-
-    const imageSource = apiClient.getPage(localParams.bookId, pageNumber)
-    let images = (
-        < C.Image
-            style={{
-                flex: 1,
-                backgroundColor: 'black'
-            }}
-            contentFit="contain"
-            source={imageSource} />
-    )
-    if (showTwoPages) {
-        if (pageNumber + 1 < pages.length) {
-            const secondImageSource = apiClient.getPage(localParams.bookId, pageNumber + 1)
-            images = (
-                <C.View
-                    style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        backgroundColor: "black",
-                    }}
-                >
-                    <C.Image
-                        style={{ flex: 1 }}
-                        contentFit="contain"
-                        source={imageSource}
-                    />
-                    <C.Image
-                        style={{ flex: 1 }}
-                        contentFit="contain"
-                        source={secondImageSource}
-                    />
-                </C.View>
-            )
-        }
-    }
-
-    let countDisplay = null
-    if (showCount) {
-        countDisplay = <C.SnowText style={{ margin: 0, padding: 0, backgroundColor: 'black', color: 'white' }}>
-            {`Page ${pageNumber} of ${pages.length}`}
-        </C.SnowText>
+    if (!bookInfo || !bookContent) {
+        return <C.SnowText>Loading book details</C.SnowText>
     }
 
     return (
-        <C.Modal
-            style={{ flex: 1, backgroundColor: 'black' }}
-            onRequestClose={() => { routes.back() }} >
-            {countDisplay}
-            {images}
-        </ C.Modal>
+        <div style={{ height: "100vh", width: "100%" }}>
+            <ReactReader
+                url={bookContent}
+                location={location}
+                locationChanged={(epubcfi) => setLocation(epubcfi)}
+                epubInitOptions={{ openAs: "binary" }}
+            />
+        </div>
     )
+
 }
