@@ -30,7 +30,7 @@ export default function LibraryListPage() {
 
     C.React.useEffect(() => {
         if (authed) {
-            navPush({ path: routes.libraryList, func: false })
+            navPush({ path: routes.landing, func: false })
         }
     }, [authed])
 

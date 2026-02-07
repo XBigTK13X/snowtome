@@ -1,30 +1,32 @@
 import C from '../../common'
-export default function SeriesListPage() {
-    const { routes, apiClient } = C.useAppContext()
-    const localParams = C.useLocalSearchParams()
+export default function LibraryListPage() {
+    const { navPush } = C.useSnowContext()
+    const { routes, bookloreClient } = C.useAppContext()
     const [seriesList, setSeriesList] = C.React.useState(null)
 
     C.React.useEffect(() => {
-        if (!seriesList) {
-            apiClient.getSeriesList(localParams.libraryId).then((response) => {
-                setSeriesList(response.content)
-            })
-        }
-    })
+        bookloreClient.getSeriesList().then((response) => {
+            setSeriesList(response)
+        })
+    }, [])
 
     if (!seriesList) {
-        return <C.SnowText>Loading series list...</C.SnowText>
+        return <C.SnowText>Loading series for {bookloreClient.username}...</C.SnowText>
     }
 
     return (
-        <C.FillView>
-            <C.SnowGrid itemsPerRow={7} items={seriesList} renderItem={(item) => {
-                const thumbnail = apiClient.getSeriesThumbnail(item.id)
-                return <C.SnowImageButton
-                    title={item.name}
-                    imageSource={thumbnail}
-                    onPress={routes.func(routes.bookList, { seriesId: item.id, seriesName: item.name })} />
+        <>
+            <C.SnowLabel center>Series [{seriesList?.length}]</C.SnowLabel>
+            <C.SnowGrid itemsPerRow={3} items={seriesList} renderItem={(item) => {
+                return <C.SnowTextButton
+                    title={item}
+                    onPress={navPush({
+                        path: routes.seriesDetails,
+                        params: {
+                            seriesName: item
+                        }
+                    })} />
             }} />
-        </C.FillView>
+        </>
     )
 }

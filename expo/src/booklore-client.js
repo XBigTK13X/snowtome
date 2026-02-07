@@ -146,7 +146,79 @@ export class BookloreClient {
                     if (response) {
                         let result = response.filter((item) => {
                             return item.libraryId === libraryId
-                        });
+                        }).sort((a, b) => {
+                            const nameA = a.metadata.title.toLowerCase();
+                            const nameB = b.metadata.title.toLowerCase();
+
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });;
+                        return resolve(result)
+                    }
+                    return resolve(null)
+                })
+        })
+    }
+
+    getSeriesList = (libraryId) => {
+        return new Promise((resolve) => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let dedupe = {}
+                        for (let item of response) {
+                            if (item?.metadata?.seriesName) {
+                                dedupe[item?.metadata?.seriesName] = true
+                            }
+                        }
+                        let result = Object.keys(dedupe)
+                            .sort((a, b) => {
+                                const nameA = a.toLowerCase();
+                                const nameB = b.toLowerCase();
+
+                                if (nameA < nameB) {
+                                    return -1;
+                                }
+                                if (nameA > nameB) {
+                                    return 1;
+                                }
+                                return 0;
+                            });;
+                        return resolve(result)
+                    }
+                    return resolve(null)
+                })
+        })
+    }
+
+    getBookListBySeries = (seriesName) => {
+        return new Promise((resolve) => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.filter((item) => {
+                            return item?.metadata?.seriesName === seriesName
+                        }).sort((a, b) => {
+                            if (a.metadata.seriesNumber !== b.metadata.seriesNumber) {
+                                return a.metadata.seriesNumber - b.metadata.seriesNumber
+                            }
+
+                            const nameA = a.metadata.title.toLowerCase();
+                            const nameB = b.metadata.title.toLowerCase();
+
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });;
                         return resolve(result)
                     }
                     return resolve(null)
