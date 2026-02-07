@@ -220,8 +220,17 @@ export class BookloreClient {
         })
     }
 
+    getBookContentUrl = (bookId) => {
+        const bookUrl = `/books/${bookId}/download`
+        return new Promise(resolve => {
+            return resolve({
+                downloadUrl: bookUrl,
+                authToken: this.accessToken
+            })
+        })
+    }
+
     updateBookProgress = (bookId, percent) => {
-        // for epub
         let payload = {
             epubProgress: {
                 percentage: percent
