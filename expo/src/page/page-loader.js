@@ -68,7 +68,7 @@ export default function PageLoader() {
                 <Snow.App
                     key={appKey}
                     DEBUG_SNOW={config.debugSnowui}
-                    ENABLE_FOCUS={Platform.OS !== 'web'}
+                    ENABLE_FOCUS={false}
                     snowStyle={appStyle}
                     routePaths={routes}
                     routePages={pages}

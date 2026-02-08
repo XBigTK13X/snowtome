@@ -302,6 +302,10 @@ export class BookloreClient {
         })
     }
 
+    search(query) {
+
+    }
+
     updateBookProgress = (bookId, percent) => {
         let payload = {
             epubProgress: {

@@ -9,7 +9,7 @@ import Snow, {
 
 export default function AuthPageLoader(props) {
     const { bookloreClient, authed, routes } = useAppContext();
-    const { CurrentPage, currentRoute, navPush } = Snow.useSnowContext()
+    const { CurrentPage, currentRoute, navPush, navPop } = Snow.useSnowContext()
     const [hasAuth, setHasAuth] = React.useState(false)
 
     React.useEffect(() => {
@@ -27,7 +27,20 @@ export default function AuthPageLoader(props) {
 
     const pageKey = `${currentRoute.routePath}-${Snow.stringifySafe(currentRoute.routeParams)}`
 
+    let header = null
+    if (currentRoute.routePath.includes('/wrap/')) {
+        header = (
+            <C.SnowGrid>
+                <C.SnowTextButton title="Home" onPress={navPush({ path: routes.landing })} />
+                <C.SnowTextButton title="Back" onPress={navPop} />
+            </C.SnowGrid>
+        )
+    }
+
     return (
-        <CurrentPage key={pageKey} />
+        <>
+            {header}
+            <CurrentPage key={pageKey} />
+        </>
     )
 }
