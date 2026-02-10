@@ -1,5 +1,9 @@
 import axios from 'axios'
 
+import Snow from 'expo-snowui'
+
+import cache from './cache'
+
 // https://booklore.9914.us/api/v1/swagger-ui/index.html
 
 export class BookloreClient {
@@ -17,6 +21,7 @@ export class BookloreClient {
         this.accessToken = null
         this.refreshToken = null
         this.username = details?.username
+
         if (details?.accessToken) {
             this.accessToken = details.accessToken
             this.refreshToken = details.refreshToken
@@ -47,6 +52,30 @@ export class BookloreClient {
                 this.apiErrorSent = true
             }
         }
+    }
+
+    heartbeat = async () => {
+        console.log("Heartbeat")
+        return new Promise(resolve => {
+            return this.httpGet("/libraries")
+                .then(response => {
+                    return resolve(this.httpClient)
+                })
+                .catch(err => {
+                    this.webApiUrl = Snow.util.loadData('bookloreUrl')
+                    let username = Snow.util.loadData('username')
+                    let password = Snow.util.loadData('password')
+                    this.httpClient = axios.create({
+                        baseURL: this.webApiUrl,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    this.login(username, password).then(result => {
+                        return resolve(this.httpClient)
+                    })
+                })
+        })
     }
 
     httpGet = async (url, params) => {
@@ -87,9 +116,13 @@ export class BookloreClient {
     }
 
     login = (username, password) => {
+        console.log({ username, password, url: this.webApiUrl })
         return new Promise((resolve) => {
             return this.httpPost('/auth/login', { username, password })
                 .then((response) => {
+                    Snow.util.saveData('username', username)
+                    Snow.util.saveData('password', password)
+                    Snow.util.saveData('bookloreUrl', this.webApiUrl)
                     this.accessToken = response.accessToken
                     this.refreshToken = response.refreshToken
                     this.httpClient = axios.create({
@@ -116,28 +149,38 @@ export class BookloreClient {
     }
 
     getLibraryList = () => {
-        return new Promise((resolve) => {
-            return this.httpGet("/libraries")
-                .then((response) => {
-                    if (response) {
-                        response.sort((a, b) => {
-                            const nameA = a.name.toLowerCase();
-                            const nameB = b.name.toLowerCase();
+        return heartbeat.then(() => {
+            cache.readApiCache('library-list', () => {
+                console.log("Calling")
+                return new Promise((resolve) => {
+                    console.log("Promise")
+                    return this.httpGet("/libraries")
+                        .then((response) => {
+                            console.log({ response })
+                            if (response) {
+                                response.sort((a, b) => {
+                                    const nameA = a.name.toLowerCase();
+                                    const nameB = b.name.toLowerCase();
 
-                            if (nameA < nameB) {
-                                return -1;
+                                    if (nameA < nameB) {
+                                        return -1;
+                                    }
+                                    if (nameA > nameB) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                });
+                                return resolve(response)
                             }
-                            if (nameA > nameB) {
-                                return 1;
-                            }
-                            return 0;
-                        });
-                        return resolve(response)
-                    }
-                    return resolve(null)
+                            return resolve(null)
+                        })
                 })
+            }).then(result => {
+                return result
+            })
         })
     }
+
 
     getBookListByLibrary = (libraryId) => {
         return new Promise((resolve) => {
