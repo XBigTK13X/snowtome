@@ -1,18 +1,23 @@
-import { Directory, File } from 'expo-file-system';
-import * as FileSystemLegacy from 'expo-file-system/legacy';
+import { Platform } from 'react-native'
 
-const CACHE_DIR_PATH = `${FileSystemLegacy.cacheDirectory}api_cache`;
-const TTL_MS = 24 * 60 * 60 * 1000;
+export const readApiCache = async (key, apiCall) => {
+    if (Platform.OS === 'web') {
+        return new Promise(resolve => {
+            return apiCall().then((data) => {
+                return resolve(data)
+            })
+        })
 
-export const readApiCache = (key, apiCall) => {
-    console.log("Reading cache")
-    return new Promise(resolve => {
-        console.log("New api call")
-        const cacheDir = new Directory(CACHE_DIR_PATH);
-        console.log(CACHE_DIR_PATH)
-        const targetFile = new File(cacheDir, `${key}.json`)
-        console.log(`${key}.json`)
+    }
+    return new Promise(async resolve => {
         try {
+            const FileSystem = await import('expo-file-system');
+            const FileSystemLegacy = await import('expo-file-system/legacy');
+            const CACHE_DIR_PATH = `${FileSystemLegacy.cacheDirectory}api_cache`;
+            const TTL_MS = 24 * 60 * 60 * 1000;
+            const now = Date.now();
+            const cacheDir = new FileSystem.Directory(CACHE_DIR_PATH);
+            const targetFile = new FileSystem.File(cacheDir, `${key}.json`)
             if (!cacheDir.exists) {
                 cacheDir.create()
             }

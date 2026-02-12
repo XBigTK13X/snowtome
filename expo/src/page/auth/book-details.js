@@ -60,7 +60,6 @@ export default function BookDetailsPage() {
 
     const downloadBook = () => {
         let pathParts = bookInfo.filePath.split('.')
-        console.log({ pathParts })
         const fileName = `${bookInfo.metadata.title}.${pathParts.at(-1)}`
         bookloreClient.getBookContentUrl(currentRoute.routeParams.bookId)
             .then(response => {

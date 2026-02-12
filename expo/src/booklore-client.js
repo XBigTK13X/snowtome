@@ -55,16 +55,15 @@ export class BookloreClient {
     }
 
     heartbeat = async () => {
-        console.log("Heartbeat")
         return new Promise(resolve => {
             return this.httpGet("/libraries")
-                .then(response => {
+                .then(() => {
                     return resolve(this.httpClient)
                 })
                 .catch(err => {
-                    this.webApiUrl = Snow.util.loadData('bookloreUrl')
-                    let username = Snow.util.loadData('username')
-                    let password = Snow.util.loadData('password')
+                    this.webApiUrl = Snow.loadData('bookloreUrl')
+                    let username = Snow.loadData('username')
+                    let password = Snow.loadData('password')
                     this.httpClient = axios.create({
                         baseURL: this.webApiUrl,
                         headers: {
@@ -116,13 +115,12 @@ export class BookloreClient {
     }
 
     login = (username, password) => {
-        console.log({ username, password, url: this.webApiUrl })
         return new Promise((resolve) => {
             return this.httpPost('/auth/login', { username, password })
                 .then((response) => {
-                    Snow.util.saveData('username', username)
-                    Snow.util.saveData('password', password)
-                    Snow.util.saveData('bookloreUrl', this.webApiUrl)
+                    Snow.saveData('username', username)
+                    Snow.saveData('password', password)
+                    Snow.saveData('bookloreUrl', this.webApiUrl)
                     this.accessToken = response.accessToken
                     this.refreshToken = response.refreshToken
                     this.httpClient = axios.create({
@@ -148,50 +146,29 @@ export class BookloreClient {
         }
     }
 
-    getLibraryList = () => {
-        return heartbeat.then(() => {
-            cache.readApiCache('library-list', () => {
-                console.log("Calling")
-                return new Promise((resolve) => {
-                    console.log("Promise")
-                    return this.httpGet("/libraries")
-                        .then((response) => {
-                            console.log({ response })
-                            if (response) {
-                                response.sort((a, b) => {
-                                    const nameA = a.name.toLowerCase();
-                                    const nameB = b.name.toLowerCase();
-
-                                    if (nameA < nameB) {
-                                        return -1;
-                                    }
-                                    if (nameA > nameB) {
-                                        return 1;
-                                    }
-                                    return 0;
-                                });
-                                return resolve(response)
-                            }
-                            return resolve(null)
-                        })
+    getOrRead = (key, getter) => {
+        return new Promise(resolve => {
+            return this.heartbeat().then(() => {
+                cache.readApiCache(key, () => {
+                    return getter().then(result => {
+                        if (result) {
+                            return resolve(result)
+                        }
+                        return resolve(null)
+                    })
                 })
-            }).then(result => {
-                return result
             })
         })
     }
 
-
-    getBookListByLibrary = (libraryId) => {
-        return new Promise((resolve) => {
-            return this.httpGet("/books")
+    getLibraryList = () => {
+        return this.getOrRead('library-list', () => {
+            return this.httpGet("/libraries")
                 .then((response) => {
                     if (response) {
-                        let result = response.filter((item) => {
-                            return item.libraryId === libraryId
-                        }).sort((a, b) => {
-                            const nameA = a.metadata.title.toLowerCase();
-                            const nameB = b.metadata.title.toLowerCase();
+                        response.sort((a, b) => {
+                            const nameA = a.name.toLowerCase();
+                            const nameB = b.name.toLowerCase();
 
                             if (nameA < nameB) {
                                 return -1;
@@ -200,16 +177,43 @@ export class BookloreClient {
                                 return 1;
                             }
                             return 0;
-                        });;
-                        return resolve(result)
+                        });
+                        return response
                     }
-                    return resolve(null)
+                    return null
+                })
+        })
+    }
+
+
+    getBookListByLibrary = (libraryId) => {
+        return this.getOrRead(`book-list-${libraryId}`, () => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.filter((item) => {
+                            return item.libraryId === libraryId
+                        }).sort((a, b) => {
+                            const nameA = a?.metadata?.title?.toLowerCase() ?? ""
+                            const nameB = b?.metadata?.title?.toLowerCase() ?? ""
+
+                            if (nameA < nameB) {
+                                return -1
+                            }
+                            if (nameA > nameB) {
+                                return 1
+                            }
+                            return 0
+                        })
+                        return result
+                    }
+                    return null
                 })
         })
     }
 
     getSeriesList = (libraryId) => {
-        return new Promise((resolve) => {
+        return this.getOrRead(`series-list`, () => {
             return this.httpGet("/books")
                 .then((response) => {
                     if (response) {
@@ -221,20 +225,20 @@ export class BookloreClient {
                         }
                         let result = Object.keys(dedupe)
                             .sort((a, b) => {
-                                const nameA = a.toLowerCase();
-                                const nameB = b.toLowerCase();
+                                const nameA = a.toLowerCase()
+                                const nameB = b.toLowerCase()
 
                                 if (nameA < nameB) {
-                                    return -1;
+                                    return -1
                                 }
                                 if (nameA > nameB) {
-                                    return 1;
+                                    return 1
                                 }
-                                return 0;
-                            });;
-                        return resolve(result)
+                                return 0
+                            })
+                        return result
                     }
-                    return resolve(null)
+                    return null
                 })
         })
     }
