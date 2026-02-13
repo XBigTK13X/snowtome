@@ -20,7 +20,7 @@ export default function LibraryDetailsPage() {
             <C.SnowGrid itemsPerRow={4} items={bookList} renderItem={(item) => {
                 const thumbnail = bookloreClient.getBookThumbnail(item.id)
                 return <C.SnowImageButton
-                    title={item?.metadata?.title}
+                    title={item?.metadata?.title ?? `[${item?.id}]`}
                     imageUrl={thumbnail}
                     onPress={navPush({
                         path: routes.bookDetails,

@@ -19,6 +19,7 @@ export default function LibraryDetailsPage() {
             <C.SnowLabel center>Books [{bookList?.length}]</C.SnowLabel>
             <C.SnowGrid itemsPerRow={4} items={bookList} renderItem={(item) => {
                 const thumbnail = bookloreClient.getBookThumbnail(item.id)
+                console.log({ item })
                 return <C.SnowImageButton
                     title={item?.metadata?.title}
                     imageUrl={thumbnail}

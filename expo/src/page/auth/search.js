@@ -1,4 +1,4 @@
-import { C, useAppContext } from 'snowstream'
+import { C, useAppContext } from 'snowtome'
 
 export default function SearchPage() {
     const { bookloreClient, routes } = useAppContext()
@@ -15,7 +15,7 @@ export default function SearchPage() {
             setQueryText(query)
             queryTextRef.current = query
             if (query?.length > 1) {
-                apiClient.search(query).then(response => {
+                bookloreClient.search(query).then(response => {
                     if (queryTextRef.current === query) {
                         setSearchResults(response)
                         setResultKey(`query-${query}`)
@@ -51,45 +51,51 @@ export default function SearchPage() {
             resultsTabs = (
                 <C.SnowTabs key={resultKey} focusKey="search-results" headers={headers}>
                     {searchResults.map((searchResult, resultIndex) => {
-                        if (searchResult.kind === 'streamables') {
-                            return <C.SnowGrid items={searchResult.items} renderItem={(item) => {
-                                return (
-                                    <C.SnowTextButton title={item.name}
+                        const isBook = searchResult.name === 'Book'
+                        const isSeries = searchResult.name === 'Series'
+                        const isCategory = searchResult.name === 'Category'
+                        return (
+                            <C.SnowGrid items={searchResult.items} renderItem={() => {
+                                if (isBook) {
+                                    const thumbnail = bookloreClient.getBookThumbnail(item.id)
+                                    return (
+                                        <C.SnowImageButton
+                                            title={item?.metadata?.title}
+                                            imageUrl={thumbnail}
+                                            onPress={navPush({
+                                                path: routes.bookDetails,
+                                                params: {
+                                                    libraryId: item.libraryId,
+                                                    libraryName: item.libraryName,
+                                                    bookId: item.id,
+                                                    bookName: item.metadata?.title,
+                                                    bookKind: item.bookType
+                                                }
+                                            })} />
+                                    )
+                                }
+                                if (isSeries) {
+                                    return <C.SnowTextButton
+                                        title={item}
                                         onPress={navPush({
-                                            path: routes.streamablePlay,
+                                            path: routes.seriesDetails,
                                             params: {
-                                                streamSourceId: item.stream_source.id,
-                                                streamableId: item.id
+                                                seriesName: item
                                             }
-                                        })}
-                                        onLongPress={navPush({
-                                            path: routes.streamablePlay,
+                                        })} />
+                                }
+                                if (isCategory) {
+                                    return <C.SnowTextButton
+                                        title={item}
+                                        onPress={navPush({
+                                            path: routes.seriesDetails,
                                             params: {
-                                                streamSourceId: item.stream_source.id,
-                                                streamableId: item.id,
-                                                transcode: true
+                                                seriesName: item
                                             }
-                                        })}
-                                    />
-                                )
+                                        })} />
+                                }
                             }} />
-                        }
-                        if (searchResult.kind === 'keepsake-directories') {
-                            return <C.SnowGrid items={searchResult.items} renderItem={(item) => {
-                                return (
-                                    <C.SnowTextButton title={item.display} onPress={navPush({
-                                        path: routes.keepsakeDetails,
-                                        params: {
-                                            shelfId: item.shelf.id
-                                        }
-                                    })} />
-                                )
-                            }} />
-                        }
-                        if (searchResult.kind === 'keepsake-videos') {
-                            return <C.SnowScreencapGrid disableWatched items={searchResult.items} />
-                        }
-                        return <C.SnowPosterGrid disableWatched items={searchResult.items} />
+                        )
                     })}
                 </C.SnowTabs>
             )

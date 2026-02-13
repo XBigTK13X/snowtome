@@ -1,12 +1,13 @@
 export var routes = {
     login: '/login',
 
+    bookDetails: '/auth/wrap/book',
     landing: '/auth/landing',
-    libraryList: '/auth/wrap/library/list',
     libraryDetails: '/auth/wrap/library',
-    seriesList: '/auth/wrap/series/list',
+    libraryList: '/auth/wrap/library/list',
+    search: '/auth/search',
     seriesDetails: '/auth/wrap/series/details',
-    bookDetails: '/auth/wrap/book'
+    seriesList: '/auth/wrap/series/list',
 }
 
 export function QuietReactWarning() {

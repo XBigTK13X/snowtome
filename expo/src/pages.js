@@ -2,22 +2,25 @@ import { routes } from './routes'
 
 import LoginPage from './page/login'
 
-import LandingPage from './page/auth/landing'
-import LibraryListPage from './page/auth/library-list'
-import LibraryDetailsPage from './page/auth/library-details'
-import SeriesListPage from './page/auth/series-list'
-import SeriesDetailsPage from './page/auth/series-details'
 import BookDetailsPage from './page/auth/book-details'
+import LandingPage from './page/auth/landing'
+import LibraryDetailsPage from './page/auth/library-details'
+import LibraryListPage from './page/auth/library-list'
+import SearchPage from './page/auth/search'
+import SeriesDetailsPage from './page/auth/series-details'
+import SeriesListPage from './page/auth/series-list'
+
 
 export var pages = {
     [routes.login]: LoginPage,
 
+    [routes.bookDetails]: BookDetailsPage,
     [routes.landing]: LandingPage,
     [routes.libraryDetails]: LibraryDetailsPage,
     [routes.libraryList]: LibraryListPage,
-    [routes.seriesList]: SeriesListPage,
+    [routes.search]: SearchPage,
     [routes.seriesDetails]: SeriesDetailsPage,
-    [routes.bookDetails]: BookDetailsPage
+    [routes.seriesList]: SeriesListPage,
 }
 
 

@@ -6,6 +6,53 @@ import cache from './cache'
 
 // https://booklore.9914.us/api/v1/swagger-ui/index.html
 
+const by_name = (a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+
+    if (nameA < nameB) {
+        return -1;
+    }
+    if (nameA > nameB) {
+        return 1;
+    }
+    return 0;
+}
+
+const by_input = (a, b) => {
+    const nameA = a.toLowerCase()
+    const nameB = b.toLowerCase()
+
+    if (nameA < nameB) {
+        return -1
+    }
+    if (nameA > nameB) {
+        return 1
+    }
+    return 0
+}
+
+const by_title = (a, b) => {
+    const nameA = a?.metadata?.title?.toLowerCase() ?? ""
+    const nameB = b?.metadata?.title?.toLowerCase() ?? ""
+
+    if (nameA < nameB) {
+        return -1
+    }
+    if (nameA > nameB) {
+        return 1
+    }
+    return 0
+}
+
+const by_series_then_title = (a, b) => {
+    if (a.metadata?.seriesNumber !== b.metadata?.seriesNumber) {
+        return a.metadata.seriesNumber - b.metadata.seriesNumber
+    }
+
+    return by_title(a, b)
+}
+
 export class BookloreClient {
     constructor(details) {
         this.onApiError = details.onApiError
@@ -114,6 +161,21 @@ export class BookloreClient {
             })
     }
 
+    readRemoteIfStale = (key, getter) => {
+        return new Promise(resolve => {
+            return this.heartbeat().then(() => {
+                cache.readApiCache(key, () => {
+                    return getter().then(result => {
+                        if (result) {
+                            return resolve(result)
+                        }
+                        return resolve(null)
+                    })
+                })
+            })
+        })
+    }
+
     login = (username, password) => {
         return new Promise((resolve) => {
             return this.httpPost('/auth/login', { username, password })
@@ -146,38 +208,12 @@ export class BookloreClient {
         }
     }
 
-    getOrRead = (key, getter) => {
-        return new Promise(resolve => {
-            return this.heartbeat().then(() => {
-                cache.readApiCache(key, () => {
-                    return getter().then(result => {
-                        if (result) {
-                            return resolve(result)
-                        }
-                        return resolve(null)
-                    })
-                })
-            })
-        })
-    }
-
     getLibraryList = () => {
-        return this.getOrRead('library-list', () => {
+        return this.readRemoteIfStale('library-list', () => {
             return this.httpGet("/libraries")
                 .then((response) => {
                     if (response) {
-                        response.sort((a, b) => {
-                            const nameA = a.name.toLowerCase();
-                            const nameB = b.name.toLowerCase();
-
-                            if (nameA < nameB) {
-                                return -1;
-                            }
-                            if (nameA > nameB) {
-                                return 1;
-                            }
-                            return 0;
-                        });
+                        response.sort(by_name);
                         return response
                     }
                     return null
@@ -187,24 +223,13 @@ export class BookloreClient {
 
 
     getBookListByLibrary = (libraryId) => {
-        return this.getOrRead(`book-list-${libraryId}`, () => {
+        return this.readRemoteIfStale(`book-list-${libraryId}`, () => {
             return this.httpGet("/books")
                 .then((response) => {
                     if (response) {
                         let result = response.filter((item) => {
                             return item.libraryId === libraryId
-                        }).sort((a, b) => {
-                            const nameA = a?.metadata?.title?.toLowerCase() ?? ""
-                            const nameB = b?.metadata?.title?.toLowerCase() ?? ""
-
-                            if (nameA < nameB) {
-                                return -1
-                            }
-                            if (nameA > nameB) {
-                                return 1
-                            }
-                            return 0
-                        })
+                        }).sort(by_title)
                         return result
                     }
                     return null
@@ -213,7 +238,7 @@ export class BookloreClient {
     }
 
     getSeriesList = (libraryId) => {
-        return this.getOrRead(`series-list`, () => {
+        return this.readRemoteIfStale(`series-list`, () => {
             return this.httpGet("/books")
                 .then((response) => {
                     if (response) {
@@ -224,18 +249,7 @@ export class BookloreClient {
                             }
                         }
                         let result = Object.keys(dedupe)
-                            .sort((a, b) => {
-                                const nameA = a.toLowerCase()
-                                const nameB = b.toLowerCase()
-
-                                if (nameA < nameB) {
-                                    return -1
-                                }
-                                if (nameA > nameB) {
-                                    return 1
-                                }
-                                return 0
-                            })
+                            .sort(by_input)
                         return result
                     }
                     return null
@@ -244,31 +258,16 @@ export class BookloreClient {
     }
 
     getBookListBySeries = (seriesName) => {
-        return new Promise((resolve) => {
+        return this.readRemoteIfStale(`series-name-${seriesName}`, () => {
             return this.httpGet("/books")
                 .then((response) => {
                     if (response) {
                         let result = response.filter((item) => {
                             return item?.metadata?.seriesName === seriesName
-                        }).sort((a, b) => {
-                            if (a.metadata.seriesNumber !== b.metadata.seriesNumber) {
-                                return a.metadata.seriesNumber - b.metadata.seriesNumber
-                            }
-
-                            const nameA = a.metadata.title.toLowerCase();
-                            const nameB = b.metadata.title.toLowerCase();
-
-                            if (nameA < nameB) {
-                                return -1;
-                            }
-                            if (nameA > nameB) {
-                                return 1;
-                            }
-                            return 0;
-                        });;
-                        return resolve(result)
+                        }).sort(by_series_then_title)
+                        return result
                     }
-                    return resolve(null)
+                    return null
                 })
         })
     }
@@ -282,40 +281,69 @@ export class BookloreClient {
         })
     }
 
-    getSeriesList(libraryId) {
-        const payload = {
-            "condition": {
-                "allOf": [{
-                    "libraryId": {
-                        "operator": "is",
-                        "value": libraryId
-                    }
-                }]
-            }
-        }
-        return this.httpPost(`/series/list?page=0&size=500&sort=metadata.titleSort,asc`, payload)
-    }
-
-    getSeriesThumbnail = (seriesId) => {
-        return this.imageSource(`/series/${seriesId}/thumbnail`)
-    }
-
-    getBookList = (seriesId) => {
-        const payload = {
-            "condition": {
-                "allOf": [{
-                    "seriesId": {
-                        "operator": "is",
-                        "value": seriesId
-                    }
-                }]
-            }
-        }
-        return this.httpPost(`/books/list?page=0&size=500&sort=metadata.numberSort,asc`, payload)
-    }
-
     getBookThumbnail = (bookId) => {
         return `${this.webApiUrl}/media/book/${bookId}/thumbnail?token=${this.accessToken}`
+    }
+
+    search(query) {
+        return this.readRemoteIfStale(`book-list`, () => {
+            return this.httpGet("/books").then((response) => {
+                return response
+            })
+        }).then(response => {
+            let dedupe = {
+                series: {},
+                category: {}
+            }
+            let matches = [
+                {
+                    name: 'Book',
+                    items: []
+                },
+                {
+                    name: 'Series',
+                    items: [],
+                },
+                {
+                    name: 'Category',
+                    items: []
+                }
+            ]
+            if (response) {
+                let needle = query.toLowerCase()
+                for (let book of response) {
+                    if (book?.metadata?.title?.toLowerCase().includes(needle)) {
+                        matches[0].items.push(book)
+                    }
+                    if (book?.metadata?.seriesName?.toLowerCase().includes(needle)) {
+                        if (!dedupe.series.hasOwnProperty(book?.metadata?.seriesName)) {
+                            matches[1].items.push(book)
+                            dedupe.series[book.metadata.seriesName] = true
+                        }
+                    }
+                    if (book?.metadata?.categories) {
+                        for (let category of book.metadata.categories) {
+                            if (category.toLowerCase().includes(needle)) {
+                                if (!dedupe.category.hasOwnProperty(category)) {
+                                    matches[2].items.push(category)
+                                    dedupe.category[category] = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (matches[2].items.length == 0) {
+                matches.splice(2, 1)
+            }
+            if (matches[1].items.length == 0) {
+                matches.splice(1, 1)
+            }
+            if (matches[0].items.length == 0) {
+                matches.splice(0, 1)
+            }
+            return matches
+        })
     }
 
     getPageList = (bookId) => {
@@ -347,10 +375,6 @@ export class BookloreClient {
                 authToken: this.accessToken
             })
         })
-    }
-
-    search(query) {
-
     }
 
     updateBookProgress = (bookId, percent) => {
