@@ -325,7 +325,9 @@ export class BookloreClient {
                         for (let category of book.metadata.categories) {
                             if (category.toLowerCase().includes(needle)) {
                                 if (!dedupe.category.hasOwnProperty(category)) {
-                                    matches[2].items.push(category)
+                                    matches[2].items.push({
+                                        name: category
+                                    })
                                     dedupe.category[category] = true
                                 }
                             }

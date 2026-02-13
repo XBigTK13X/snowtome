@@ -1,11 +1,6 @@
 import React from 'react'
-import { View } from 'react-native'
+import Snow from 'expo-snowui'
 import { C, useAppContext } from 'snowtome'
-import Snow, {
-    SnowTextButton,
-    SnowGrid,
-    SnowBreak
-} from 'expo-snowui'
 
 export default function AuthPageLoader(props) {
     const { bookloreClient, authed, routes } = useAppContext();
@@ -30,10 +25,10 @@ export default function AuthPageLoader(props) {
     let header = null
     if (currentRoute.routePath.includes('/wrap/')) {
         header = (
-            <C.SnowGrid>
-                <C.SnowTextButton title="Home" onPress={navPush({ path: routes.landing })} />
-                <C.SnowTextButton title="Back" onPress={navPop} />
-            </C.SnowGrid>
+            <Snow.Grid>
+                <Snow.TextButton title="Home" onPress={navPush({ path: routes.landing })} />
+                <Snow.TextButton title="Back" onPress={navPop} />
+            </Snow.Grid>
         )
     }
 

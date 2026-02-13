@@ -1,6 +1,7 @@
+import Snow from 'expo-snowui'
 import C from '../../common'
 export default function LibraryDetailsPage() {
-    const { navPush, currentRoute } = C.useSnowContext()
+    const { navPush, currentRoute } = Snow.useSnowContext()
     const { routes, bookloreClient } = C.useAppContext()
     const [bookList, setBookList] = C.React.useState(null)
 
@@ -11,15 +12,15 @@ export default function LibraryDetailsPage() {
     }, [])
 
     if (!bookList) {
-        return <C.SnowText>Loading books in {currentRoute?.routeParams?.libraryName}...</C.SnowText>
+        return <Snow.Text>Loading books in {currentRoute?.routeParams?.libraryName}...</Snow.Text>
     }
 
     return (
         <>
-            <C.SnowLabel center>Books [{bookList?.length}]</C.SnowLabel>
-            <C.SnowGrid itemsPerRow={4} items={bookList} renderItem={(item) => {
+            <Snow.Label center>Books [{bookList?.length}]</Snow.Label>
+            <Snow.Grid itemsPerRow={4} items={bookList} renderItem={(item) => {
                 const thumbnail = bookloreClient.getBookThumbnail(item.id)
-                return <C.SnowImageButton
+                return <Snow.ImageButton
                     title={item?.metadata?.title ?? `[${item?.id}]`}
                     imageUrl={thumbnail}
                     onPress={navPush({

@@ -1,5 +1,5 @@
+import Snow from 'expo-snowui'
 import C from '../../common'
-
 import { Platform } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import { Directory, File } from 'expo-file-system';
@@ -48,7 +48,7 @@ const downloadFile = async (remoteUrl, token, fileName) => {
 
 export default function BookDetailsPage() {
     const { bookloreClient } = C.useAppContext()
-    const { currentRoute } = C.useSnowContext()
+    const { currentRoute } = Snow.useSnowContext()
 
     const [bookInfo, setBookInfo] = C.React.useState(null)
 
@@ -72,19 +72,19 @@ export default function BookDetailsPage() {
     }
 
     if (!bookInfo) {
-        return <C.SnowText>Loading book details</C.SnowText>
+        return <Snow.Text>Loading book details</Snow.Text>
     }
 
     const thumbnail = bookloreClient.getBookThumbnail(bookInfo.id)
 
     return (
         <>
-            <C.SnowText>Title: {bookInfo.metadata.title}</C.SnowText>
+            <Snow.Text>Title: {bookInfo.metadata.title}</Snow.Text>
             <C.Image imageSource={thumbnail} />
-            <C.SnowGrid>
-                <C.SnowTextButton title="Download" onPress={downloadBook} />
-                <C.SnowTextButton title="Mark Read" onPress={toggleRead} />
-            </C.SnowGrid>
+            <Snow.Grid>
+                <Snow.TextButton title="Download" onPress={downloadBook} />
+                <Snow.TextButton title="Mark Read" onPress={toggleRead} />
+            </Snow.Grid>
         </>
     )
 

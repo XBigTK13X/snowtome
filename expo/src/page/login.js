@@ -1,8 +1,10 @@
+import Snow from 'expo-snowui'
 import C from '../common'
 import { config } from '../settings'
+
 export default function LibraryListPage() {
     const { routes, onLogin, authed } = C.useAppContext()
-    const { navPush } = C.useSnowContext()
+    const { navPush } = Snow.useSnowContext()
 
     const [form, setForm] = C.React.useState({
         bookloreUrl: '',
@@ -36,22 +38,22 @@ export default function LibraryListPage() {
 
     return (
         <C.View>
-            <C.SnowHeader>Booklore</C.SnowHeader>
-            <C.SnowGrid itemsPerRow={2}>
-                <C.SnowLabel>Server URL</C.SnowLabel>
-                <C.SnowInput onValueChange={changeForm('bookloreUrl')} value={form.bookloreUrl} />
-                <C.SnowLabel>Username</C.SnowLabel>
-                <C.SnowInput onValueChange={changeForm('bookloreUsername')} value={form.bookloreUsername} />
-                <C.SnowLabel>Password</C.SnowLabel>
-                <C.SnowInput onValueChange={changeForm('booklorePassword')} value={form.booklorePassword} />
-            </C.SnowGrid>
-            <C.SnowTextButton title="Login" onPress={submitLogin} />
+            <Snow.Header>Booklore</Snow.Header>
+            <Snow.Grid itemsPerRow={2}>
+                <Snow.Label>Server URL</Snow.Label>
+                <Snow.Input onValueChange={changeForm('bookloreUrl')} value={form.bookloreUrl} />
+                <Snow.Label>Username</Snow.Label>
+                <Snow.Input onValueChange={changeForm('bookloreUsername')} value={form.bookloreUsername} />
+                <Snow.Label>Password</Snow.Label>
+                <Snow.Input onValueChange={changeForm('booklorePassword')} value={form.booklorePassword} />
+            </Snow.Grid>
+            <Snow.TextButton title="Login" onPress={submitLogin} />
             <C.View>
-                <C.SnowText style={{
+                <Snow.Text style={{
                     position: 'absolute',
                     right: 30,
                     bottom: -250
-                }}>{`v${config.clientVersion} - built ${config.clientBuildDate}`}</C.SnowText>
+                }}>{`v${config.clientVersion} - built ${config.clientBuildDate}`}</Snow.Text>
             </C.View>
         </C.View>
     )

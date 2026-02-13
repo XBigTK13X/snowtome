@@ -1,7 +1,5 @@
+import pkg from "../../package.json";
 import React from 'react'
-import { View, Text, Button, Platform } from 'react-native'
-import * as Sentry from "@sentry/react-native";
-import { ToastProvider } from 'expo-toast';
 import Snow from 'expo-snowui'
 import {
     config,
@@ -28,59 +26,35 @@ const appStyle = {
     }
 }
 
+const SnowApp = Snow.createSnowApp({
+    enableSentry: true,
+    sentryUrl: "https://e347f7f6238e44238666aef85b8a1b15@bugsink.9914.us/3",
+    appName: "snowtome",
+    appVersion: pkg.version
+})
+
 function PageWrapper() {
     const { CurrentPage, currentRoute } = Snow.useSnowContext()
     const { routes } = useAppContext()
-    if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
+    if (currentRoute.routePath === routes.signIn || currentRoute.routePath === '/') {
         return <CurrentPage />
     }
     return <AuthPageLoader />
 }
 
-function CrashScreen(props) {
-    return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 60, backgroundColor: 'black', color: 'white' }}>
-            <Text style={{ fontSize: 40, margin: 20, color: 'white' }}>snowtome crashed due to an unhandled error.</Text>
-            <Text style={{ fontSize: 40, margin: 20, color: 'white' }}>The problem has been logged.</Text>
-            <View style={{ width: 400, margin: 20 }}>
-                <Button title="Reload" onPress={props.reloadApp} />
-            </View>
-        </View>
-    )
-}
-
 export default function PageLoader() {
-    const [appKey, setAppKey] = React.useState(1)
-    const reloadApp = () => {
-        setAppKey(prev => { return prev + 1 })
-    }
     return (
-        <Sentry.ErrorBoundary
-            fallback={<CrashScreen reloadApp={reloadApp} />}
-            onError={(error, componentStack) => {
-                console.error('Unhandled error:', error)
-                if (componentStack) {
-                    console.error('Component stack:', componentStack)
-                }
-                Sentry.captureException(error)
-            }}>
-            <ToastProvider>
-                <Snow.App
-                    key={appKey}
-                    DEBUG_SNOW={config.debugSnowui}
-                    ENABLE_FOCUS={false}
-                    snowStyle={appStyle}
-                    routePaths={routes}
-                    routePages={pages}
-                    initialRoutePath={routes.login}
-                >
-                    <AppContextProvider>
-                        <View style={{ flex: 1, marginBottom: 50 }}>
-                            <PageWrapper />
-                        </View>
-                    </AppContextProvider >
-                </Snow.App >
-            </ToastProvider>
-        </Sentry.ErrorBoundary>
+        <SnowApp
+            DEBUG_SNOW={config.debugSnowui}
+            ENABLE_FOCUS={false}
+            snowStyle={appStyle}
+            routePaths={routes}
+            routePages={pages}
+            initialRoutePath={routes.login}
+        >
+            <AppContextProvider>
+                <PageWrapper />
+            </AppContextProvider >
+        </SnowApp>
     )
 }
