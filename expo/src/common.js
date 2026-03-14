@@ -11,6 +11,10 @@ import {
     View,
 } from 'react-native'
 
+import {
+    Image
+} from 'expo-snowui'
+
 import { useDebouncedCallback } from 'use-debounce';
 
 import util from './util'

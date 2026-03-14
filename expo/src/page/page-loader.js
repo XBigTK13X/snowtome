@@ -1,5 +1,6 @@
 import pkg from "../../package.json";
 import React from 'react'
+import { View } from 'react-native'
 import Snow from 'expo-snowui'
 import {
     config,
@@ -36,7 +37,7 @@ const SnowApp = Snow.createSnowApp({
 function PageWrapper() {
     const { CurrentPage, currentRoute } = Snow.useSnowContext()
     const { routes } = useAppContext()
-    if (currentRoute.routePath === routes.signIn || currentRoute.routePath === '/') {
+    if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
         return <CurrentPage />
     }
     return <AuthPageLoader />

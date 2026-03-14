@@ -3,6 +3,7 @@ class Config {
         this.clientVersion = "1.1.0"
         this.clientBuildDate = "September 09, 2025"
         this.clientDevBuildNumber = 1
+        this.debugSnowUi = false
     }
 }
 
