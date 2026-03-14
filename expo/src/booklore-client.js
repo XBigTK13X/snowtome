@@ -370,7 +370,7 @@ export class BookloreClient {
     }
 
     getBookContentUrl = (bookId) => {
-        const bookUrl = `/books/${bookId}/download`
+        const bookUrl = `${this.webApiUrl}/books/${bookId}/download`
         return new Promise(resolve => {
             return resolve({
                 downloadUrl: bookUrl,

@@ -25,10 +25,14 @@ export default function AuthPageLoader(props) {
     let header = null
     if (currentRoute.routePath.includes('/wrap/')) {
         header = (
-            <Snow.Grid>
-                <Snow.TextButton title="Home" onPress={navPush({ path: routes.landing })} />
-                <Snow.TextButton title="Back" onPress={navPop} />
-            </Snow.Grid>
+            <>
+                <Snow.Grid>
+                    <Snow.TextButton title="Home" onPress={navPush({ path: routes.landing })} />
+                    <Snow.TextButton title="Back" onPress={navPop} />
+                </Snow.Grid>
+                <Snow.Break />
+            </>
+
         )
     }
 

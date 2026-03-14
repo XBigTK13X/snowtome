@@ -40,6 +40,7 @@ export function AppContextProvider(props) {
     }
     const [booklore, setBooklore] = React.useState(null)
     const [authed, setAuthed] = React.useState(false)
+    const [downloadDirectory, setDownloadDirectory] = React.useState(null)
 
     const onLogin = (webApiUrl, username, password) => {
         const client = new BookloreClient({
@@ -66,6 +67,11 @@ export function AppContextProvider(props) {
         setAuthed(false)
     }
 
+    const updateDownloadDirectory = (uri) => {
+        Snow.saveData('downloadDirectoryUri', uri)
+        setDownloadDirectory(uri)
+    }
+
     React.useEffect(() => {
         let bookloreAuth = Snow.loadData('bookloreAuth')
         if (bookloreAuth) {
@@ -78,6 +84,10 @@ export function AppContextProvider(props) {
             })
             setBooklore(client)
             setAuthed(true)
+        }
+        const savedDir = Snow.loadData('downloadDirectoryUri')
+        if (savedDir) {
+            setDownloadDirectory(savedDir)
         }
     }, [])
 
@@ -113,7 +123,9 @@ export function AppContextProvider(props) {
         bookloreClient: booklore,
         authed,
         onLogin,
-        onLogout
+        onLogout,
+        downloadDirectory,
+        updateDownloadDirectory,
     }
 
     return (

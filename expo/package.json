@@ -16,6 +16,7 @@
     "expo-build-properties": "1.0.10",
     "expo-constants": "^18.0.13",
     "expo-file-system": "^19.0.21",
+    "expo-intent-launcher": "^55.0.8",
     "expo-linking": "8.0.11",
     "expo-secure-store": "^15.0.7",
     "expo-sharing": "^14.0.8",
