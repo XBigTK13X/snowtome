@@ -13,7 +13,7 @@ export default function LibraryListPage() {
     }, [])
 
     if (!libraryList) {
-        return <Snow.Text>Loading libraries for {bookloreClient.username}...</Snow.Text>
+        return <Snow.Label center>Loading libraries for {bookloreClient.username}...</Snow.Label>
     }
 
     return (

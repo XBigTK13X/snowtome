@@ -19,7 +19,7 @@ export default function LibraryListPage() {
     return (
         <>
             <Snow.Label center>Series [{seriesList?.length}]</Snow.Label>
-            <Snow.Grid itemsPerRow={3} items={seriesList} renderItem={(item) => {
+            <Snow.Grid itemsPerRow={4} items={seriesList} renderItem={(item) => {
                 return <Snow.TextButton
                     title={item}
                     onPress={navPush({

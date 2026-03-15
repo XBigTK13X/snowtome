@@ -28,7 +28,7 @@ export default function AuthPageLoader(props) {
             <>
                 <Snow.Grid>
                     <Snow.TextButton title="Home" onPress={navPush({ path: routes.landing })} />
-                    <Snow.TextButton title="Back" onPress={navPop} />
+                    <Snow.TextButton title="Back" onPress={navPop(true)} />
                 </Snow.Grid>
                 <Snow.Break />
             </>

@@ -19,6 +19,10 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import util from './util'
 
+import download from './download'
+
+import cache from './cache'
+
 import { useAppContext } from './app-context'
 
 const isWeb = Platform.OS === 'web'
@@ -26,6 +30,8 @@ const isAndroid = Platform.OS === 'android'
 const isTV = Platform.isTV
 
 export default {
+    cache,
+    download,
     isAndroid,
     isTV,
     isWeb,
