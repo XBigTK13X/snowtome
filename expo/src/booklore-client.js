@@ -53,6 +53,16 @@ const by_series_then_title = (a, b) => {
     return by_title(a, b)
 }
 
+const by_alpha = (a, b) => {
+    if (a.toLowerCase() < b.toLowerCase()) {
+        return -1
+    }
+    if (a.toLowerCase() > b.toLowerCase()) {
+        return 1
+    }
+    return 0
+}
+
 export class BookloreClient {
     constructor(details) {
         this.onApiError = details.onApiError
@@ -237,7 +247,7 @@ export class BookloreClient {
         })
     }
 
-    getSeriesList = (libraryId) => {
+    getSeriesList = () => {
         return this.readRemoteIfStale(`series-list`, () => {
             return this.httpGet("/books")
                 .then((response) => {
@@ -265,6 +275,41 @@ export class BookloreClient {
                         let result = response.filter((item) => {
                             return item?.metadata?.seriesName === seriesName
                         }).sort(by_series_then_title)
+                        return result
+                    }
+                    return null
+                })
+        })
+    }
+
+    getAuthorList = () => {
+        return this.readRemoteIfStale(`author-list`, () => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let dedupe = {}
+                        for (let item of response) {
+                            if (item?.metadata?.authors?.length) {
+                                dedupe[item?.metadata?.authors.at(0)] = true
+                            }
+                        }
+                        let result = Object.keys(dedupe)
+                            .sort(by_alpha)
+                        return result
+                    }
+                    return null
+                })
+        })
+    }
+
+    getBookListByAuthor = (authorName) => {
+        return this.readRemoteIfStale(`author-name-${authorName}`, () => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.filter((item) => {
+                            return item?.metadata?.authors?.at(0) === authorName
+                        }).sort(by_title)
                         return result
                     }
                     return null

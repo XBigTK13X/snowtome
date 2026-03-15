@@ -1,6 +1,8 @@
 export var routes = {
     login: '/login',
 
+    authorDetails: '/auth/wrap/author/details',
+    authorList: '/auth/wrap/author/list',
     bookDetails: '/auth/wrap/book',
     downloadList: '/auth/wrap/download/list',
     landing: '/auth/landing',

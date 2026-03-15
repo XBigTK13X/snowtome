@@ -2,6 +2,8 @@ import { routes } from './routes'
 
 import LoginPage from './page/login'
 
+import AuthorDetailsPage from './page/auth/author-details'
+import AuthorListPage from './page/auth/author-list'
 import BookDetailsPage from './page/auth/book-details'
 import DownloadListPage from './page/auth/download-list'
 import LandingPage from './page/auth/landing'
@@ -16,6 +18,8 @@ import SeriesListPage from './page/auth/series-list'
 export var pages = {
     [routes.login]: LoginPage,
 
+    [routes.authorDetails]: AuthorDetailsPage,
+    [routes.authorList]: AuthorListPage,
     [routes.bookDetails]: BookDetailsPage,
     [routes.downloadList]: DownloadListPage,
     [routes.landing]: LandingPage,
