@@ -1,4 +1,4 @@
-import TextListPage from './text-list-page'
+import TextListPage from './template/text-list-page'
 
 export default function SeriesListPage() {
     return (

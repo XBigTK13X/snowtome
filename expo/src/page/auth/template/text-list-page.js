@@ -1,5 +1,5 @@
 import Snow from 'expo-snowui'
-import C from '../../common'
+import C from '../../../common'
 
 export default function TestListPage(props) {
     const { navPush } = Snow.useSnowContext()
@@ -7,10 +7,13 @@ export default function TestListPage(props) {
     const [resultList, setResultList] = C.React.useState(null)
 
     C.React.useEffect(() => {
-        props.loadData(bookloreClient).then((response) => {
-            setResultList(response)
-        })
-    }, [])
+        if (bookloreClient.accessToken) {
+
+            props.loadData(bookloreClient).then((response) => {
+                setResultList(response)
+            })
+        }
+    }, [bookloreClient])
 
     if (!resultList) {
         return <Snow.Label center>Loading {props.title} for {bookloreClient.username}...</Snow.Label>
