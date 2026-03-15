@@ -12,6 +12,7 @@ export var routes = {
     search: '/auth/search',
     seriesDetails: '/auth/wrap/series/details',
     seriesList: '/auth/wrap/series/list',
+    titleList: '/auth/wrap/title/list'
 }
 
 export function QuietReactWarning() {

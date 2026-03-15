@@ -247,6 +247,19 @@ export class BookloreClient {
         })
     }
 
+    getBookListByTitle = () => {
+        return this.readRemoteIfStale(`title-list`, () => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.sort(by_title)
+                        return result
+                    }
+                    return null
+                })
+        })
+    }
+
     getSeriesList = () => {
         return this.readRemoteIfStale(`series-list`, () => {
             return this.httpGet("/books")

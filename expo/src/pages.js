@@ -13,6 +13,7 @@ import OptionsPage from './page/auth/options'
 import SearchPage from './page/auth/search'
 import SeriesDetailsPage from './page/auth/series-details'
 import SeriesListPage from './page/auth/series-list'
+import TitleListPage from './page/auth/title-list'
 
 
 export var pages = {
@@ -29,6 +30,7 @@ export var pages = {
     [routes.search]: SearchPage,
     [routes.seriesDetails]: SeriesDetailsPage,
     [routes.seriesList]: SeriesListPage,
+    [routes.titleList]: TitleListPage
 }
 
 
