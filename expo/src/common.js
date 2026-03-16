@@ -29,6 +29,8 @@ const isWeb = Platform.OS === 'web'
 const isAndroid = Platform.OS === 'android'
 const isTV = Platform.isTV
 
+import BookList from './component/book-list'
+
 export default {
     cache,
     download,
@@ -45,4 +47,5 @@ export default {
     ScrollView,
     TouchableOpacity,
     View,
+    BookList
 }

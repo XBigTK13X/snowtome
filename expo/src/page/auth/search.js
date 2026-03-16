@@ -84,19 +84,19 @@ export default function SearchPage() {
                             }
                             } />
                         }
-                        if (searchResult.name === 'Category') {
-                            return <Snow.Grid items={searchResult.items} renderItem={(item) => {
-                                return <Snow.TextButton
-                                    title={item.name}
-                                    onPress={navPush({
-                                        path: routes.categoryDetails,
-                                        params: {
-                                            categoryName: item.name
-                                        }
-                                    })} />
-                            }
-                            } />
-                        }
+                        // if (searchResult.name === 'Category') {
+                        //     return <Snow.Grid items={searchResult.items} renderItem={(item) => {
+                        //         return <Snow.TextButton
+                        //             title={item.name}
+                        //             onPress={navPush({
+                        //                 path: routes.categoryDetails,
+                        //                 params: {
+                        //                     categoryName: item.name
+                        //                 }
+                        //             })} />
+                        //     }
+                        //     } />
+                        // }
                         if (searchResult.name === 'Author') {
                             return <Snow.Grid items={searchResult.items} renderItem={(item) => {
                                 return <Snow.TextButton

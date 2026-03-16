@@ -1,5 +1,6 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
+
 export default function LibraryDetailsPage() {
     const { navPush, currentRoute, navUpdate } = Snow.useSnowContext()
     const { routes, bookloreClient } = C.useAppContext()
@@ -46,23 +47,10 @@ export default function LibraryDetailsPage() {
     return (
         <>
             {viewPicker}
-            <Snow.Label center>Books [{libraryDetails.bookList.length}]</Snow.Label>
-            <Snow.Grid itemsPerRow={4} items={libraryDetails.bookList} renderItem={(item) => {
-                const thumbnail = bookloreClient.getBookThumbnail(item.id)
-                return <Snow.ImageButton
-                    title={item?.metadata?.title ?? `[${item?.id}]`}
-                    imageUrl={thumbnail}
-                    onPress={navPush({
-                        path: routes.bookDetails,
-                        params: {
-                            libraryId: item.libraryId,
-                            libraryName: item.libraryName,
-                            bookId: item.id,
-                            bookName: item.metadata?.title,
-                            bookKind: item.bookType
-                        }
-                    })} />
-            }} />
+            <C.BookList
+                getHeader={(routeParams) => { return `Library - ${currentRoute?.routeParams?.libraryName}` }}
+                bookList={libraryDetails.bookList}
+            />
         </>
     )
 }

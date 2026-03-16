@@ -47,7 +47,9 @@ export default function LibraryListPage() {
                 <Snow.Label>Password</Snow.Label>
                 <Snow.Input onValueChange={changeForm('booklorePassword')} value={form.booklorePassword} />
             </Snow.Grid>
-            <Snow.TextButton title="Login" onPress={submitLogin} />
+            <Snow.Grid>
+                <Snow.TextButton title="Login" onPress={submitLogin} />
+            </Snow.Grid>
             <C.View>
                 <Snow.Text style={{
                     position: 'absolute',

@@ -392,10 +392,10 @@ export class BookloreClient {
                     name: 'Series',
                     items: [],
                 },
-                {
-                    name: 'Category',
-                    items: []
-                },
+                // {
+                //     name: 'Category',
+                //     items: []
+                // },
                 {
                     name: 'Author',
                     items: []
@@ -413,23 +413,23 @@ export class BookloreClient {
                             dedupe.series[book.metadata.seriesName] = true
                         }
                     }
-                    if (book?.metadata?.categories) {
-                        for (let category of book.metadata.categories) {
-                            if (category.toLowerCase().includes(needle)) {
-                                if (!dedupe.category.hasOwnProperty(category)) {
-                                    matches[2].items.push({
-                                        name: category
-                                    })
-                                    dedupe.category[category] = true
-                                }
-                            }
-                        }
-                    }
+                    // if (book?.metadata?.categories) {
+                    //     for (let category of book.metadata.categories) {
+                    //         if (category.toLowerCase().includes(needle)) {
+                    //             if (!dedupe.category.hasOwnProperty(category)) {
+                    //                 matches[2].items.push({
+                    //                     name: category
+                    //                 })
+                    //                 dedupe.category[category] = true
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     if (book?.metadata?.authors?.length) {
                         const author = book?.metadata?.authors?.at(0)
                         if (author.toLowerCase().includes(needle)) {
                             if (!dedupe.author.hasOwnProperty(author)) {
-                                matches[3].items.push({
+                                matches[2].items.push({
                                     name: author
                                 })
                                 dedupe.author[author] = true
@@ -437,9 +437,6 @@ export class BookloreClient {
                         }
                     }
                 }
-            }
-            if (matches[3].items.length === 0) {
-                matches.splice(3, 1)
             }
             if (matches[2].items.length === 0) {
                 matches.splice(2, 1)
