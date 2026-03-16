@@ -33,10 +33,20 @@ export default function BookDetailsPage() {
     }, [bookInfo])
 
     const openBook = (uri) => {
+        const mimeTypes = {
+            epub: 'application/epub+zip',
+            pdf: 'application/pdf',
+            cbz: 'application/x-cbz',
+            cbr: 'application/x-cbr',
+            mobi: 'application/x-mobipocket-ebook',
+            azw3: 'application/x-mobi8-ebook',
+        }
+        const ext = bookInfo.primaryFile.filePath.split('.').pop().toLowerCase()
+        const type = mimeTypes[ext] ?? 'application/octet-stream'
         IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
             data: uri,
             flags: 1,
-            type: 'application/epub+zip'
+            type
         })
     }
 
