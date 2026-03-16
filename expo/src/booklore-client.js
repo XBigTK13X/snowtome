@@ -295,6 +295,21 @@ export class BookloreClient {
         })
     }
 
+    getBookListByCategory = (categoryName) => {
+        return this.readRemoteIfStale(`category-name-${categoryName}`, () => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.filter((item) => {
+                            return item?.metadata?.categories.includes(categoryName)
+                        }).sort(by_title)
+                        return result
+                    }
+                    return null
+                })
+        })
+    }
+
     getAuthorList = () => {
         return this.readRemoteIfStale(`author-list`, () => {
             return this.httpGet("/books")
@@ -351,7 +366,8 @@ export class BookloreClient {
         }).then(response => {
             let dedupe = {
                 series: {},
-                category: {}
+                category: {},
+                author: {}
             }
             let matches = [
                 {
@@ -364,6 +380,10 @@ export class BookloreClient {
                 },
                 {
                     name: 'Category',
+                    items: []
+                },
+                {
+                    name: 'Author',
                     items: []
                 }
             ]
@@ -391,15 +411,29 @@ export class BookloreClient {
                             }
                         }
                     }
+                    if (book?.metadata?.authors?.length) {
+                        const author = book?.metadata?.authors?.at(0)
+                        if (author.toLowerCase().includes(needle)) {
+                            if (!dedupe.author.hasOwnProperty(author)) {
+                                matches[3].items.push({
+                                    name: author
+                                })
+                                dedupe.author[author] = true
+                            }
+                        }
+                    }
                 }
             }
-            if (matches[2].items.length == 0) {
+            if (matches[3].items.length === 0) {
+                matches.splice(3, 1)
+            }
+            if (matches[2].items.length === 0) {
                 matches.splice(2, 1)
             }
-            if (matches[1].items.length == 0) {
+            if (matches[1].items.length === 0) {
                 matches.splice(1, 1)
             }
-            if (matches[0].items.length == 0) {
+            if (matches[0].items.length === 0) {
                 matches.splice(0, 1)
             }
             return matches

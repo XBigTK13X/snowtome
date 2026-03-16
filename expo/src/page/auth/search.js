@@ -89,9 +89,22 @@ export default function SearchPage() {
                                 return <Snow.TextButton
                                     title={item.name}
                                     onPress={navPush({
-                                        path: routes.seriesDetails,
+                                        path: routes.categoryDetails,
                                         params: {
-                                            seriesName: item.name
+                                            categoryName: item.name
+                                        }
+                                    })} />
+                            }
+                            } />
+                        }
+                        if (searchResult.name === 'Author') {
+                            return <Snow.Grid items={searchResult.items} renderItem={(item) => {
+                                return <Snow.TextButton
+                                    title={item.name}
+                                    onPress={navPush({
+                                        path: routes.authorDetails,
+                                        params: {
+                                            authorName: item.name
                                         }
                                     })} />
                             }
