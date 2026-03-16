@@ -12,6 +12,7 @@ export default function BookDetailsPage() {
     const { currentRoute, navPush } = Snow.useSnowContext()
 
     const [bookInfo, setBookInfo] = C.React.useState(null)
+    const bookInfoRef = C.React.useRef(null)
     const [localUri, setLocalUri] = C.React.useState(null)
 
     C.React.useEffect(() => {
@@ -27,6 +28,10 @@ export default function BookDetailsPage() {
         })
     }, [bookInfo, downloadDirectory])
 
+    C.React.useEffect(() => {
+        bookInfoRef.current = bookInfo
+    }, [bookInfo])
+
     const openBook = (uri) => {
         IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
             data: uri,
@@ -39,7 +44,7 @@ export default function BookDetailsPage() {
         bookloreClient.getBookContentUrl(currentRoute.routeParams.bookId)
             .then(response => {
                 C.download.downloadFile({
-                    bookInfo,
+                    bookInfo: bookInfoRef.current,
                     remoteUrl: response.downloadUrl,
                     token: response.authToken,
                     downloadDirectory,
@@ -53,7 +58,7 @@ export default function BookDetailsPage() {
     }
 
     const deleteDownload = async () => {
-        await C.download.deleteEntry(bookInfo.id)
+        await C.download.deleteEntry(bookInfoRef.current.id)
         setLocalUri(null)
     }
 
@@ -77,7 +82,6 @@ export default function BookDetailsPage() {
     let author = bookInfo?.metadata?.authors?.at(0) ?? null
     let series = bookInfo?.metadata?.seriesName ?? null
     let seriesTitle = series
-    let seriesNumber = null
     if (series) {
         let seriesNumber = bookInfo?.metadata?.seriesNumber ?? null
         if (seriesNumber) {
@@ -87,7 +91,7 @@ export default function BookDetailsPage() {
 
     return (
         <>
-            <Snow.Grid itemsPerRow={2}>
+            <Snow.Grid itemsPerRow={4}>
                 {localUri
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.TextButton title="Download" onPress={downloadBook} />

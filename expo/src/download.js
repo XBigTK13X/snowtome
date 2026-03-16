@@ -1,3 +1,4 @@
+import Snow from 'expo-snowui'
 import { Platform } from 'react-native'
 import { File, Paths } from 'expo-file-system';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -43,7 +44,7 @@ const ensureSubdirectory = async (baseDirUri, subPath) => {
 }
 
 const getDestination = (bookInfo) => {
-    const pathParts = bookInfo.filePath.split('.')
+    const pathParts = bookInfo.primaryFile.filePath.split('.')
     let fileName = ''
     let subPath = `${bookInfo.libraryName}`
     if (bookInfo.metadata?.seriesName) {

@@ -23,24 +23,11 @@ export default function DownloadListPage() {
     }
 
     return (
-        <>
-            <Snow.Label center>Downloads [{downloads.length}]</Snow.Label>
-            <Snow.Grid itemsPerRow={4} items={downloads} renderItem={(item) => {
-                const thumbnail = bookloreClient.getBookThumbnail(item.bookId)
-                return <Snow.ImageButton
-                    title={item.title}
-                    imageUrl={thumbnail}
-                    onPress={navPush({
-                        path: routes.bookDetails,
-                        params: {
-                            libraryId: item.libraryId,
-                            libraryName: item.libraryName,
-                            bookId: item.bookId,
-                            bookName: item.title,
-                            bookKind: item.bookKind
-                        }
-                    })} />
-            }} />
-        </>
+        <C.BookList
+            getHeader={() => { return "Downloads" }}
+            loadData={(bookloreClient, routeParams) => {
+                return downloads
+            }}
+        />
     )
 }
