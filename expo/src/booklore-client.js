@@ -237,10 +237,24 @@ export class BookloreClient {
             return this.httpGet("/books")
                 .then((response) => {
                     if (response) {
-                        let result = response.filter((item) => {
-                            return item.libraryId === libraryId
+                        let seriesDedupe = {}
+                        let librarySeries = []
+                        let libraryBooks = response.filter((item) => {
+                            if (item.libraryId === libraryId) {
+                                const series = item?.metadata?.seriesName
+                                if (series && !seriesDedupe.hasOwnProperty(series)) {
+                                    librarySeries.push(series)
+                                    seriesDedupe[series] = true
+                                }
+                                return true
+                            }
+                            return false
                         }).sort(by_title)
-                        return result
+                        librarySeries = librarySeries.sort(by_input)
+                        return {
+                            bookList: libraryBooks,
+                            seriesList: librarySeries
+                        }
                     }
                     return null
                 })
