@@ -6,9 +6,10 @@ export default function BookDetailsPage() {
     const {
         bookloreClient,
         downloadDirectory,
-        updateDownloadDirectory
+        updateDownloadDirectory,
+        routes
     } = C.useAppContext()
-    const { currentRoute } = Snow.useSnowContext()
+    const { currentRoute, navPush } = Snow.useSnowContext()
 
     const [bookInfo, setBookInfo] = C.React.useState(null)
     const [localUri, setLocalUri] = C.React.useState(null)
@@ -73,17 +74,39 @@ export default function BookDetailsPage() {
             .replace(/\/document\/[^/]+:/, '')
     }
 
+    let author = bookInfo?.metadata?.authors?.at(0) ?? null
+    let series = bookInfo?.metadata?.seriesName ?? null
+    let seriesTitle = series
+    let seriesNumber = null
+    if (series) {
+        let seriesNumber = bookInfo?.metadata?.seriesNumber ?? null
+        if (seriesNumber) {
+            seriesTitle = `${series} - #${seriesNumber}`
+        }
+    }
+
     return (
         <>
-            <Snow.Grid>
+            <Snow.Grid itemsPerRow={2}>
                 {localUri
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.TextButton title="Download" onPress={downloadBook} />
                 }
                 <Snow.TextButton title="Mark Read" onPress={toggleRead} />
-                {localUri && <Snow.TextButton title="Delete Local" onPress={deleteDownload} />}
+                {author ? <Snow.TextButton title={author} onPress={navPush({
+                    path: routes.authorDetails,
+                    params: {
+                        authorName: author
+                    }
+                })} /> : null}
+                {series ? <Snow.TextButton title={seriesTitle} onPress={navPush({
+                    path: routes.seriesDetails,
+                    params: {
+                        seriesName: series
+                    }
+                })} /> : null}
             </Snow.Grid>
-            <Snow.Grid itemsPerRow={2}>
+            <Snow.Grid itemsPerRow={4}>
                 <Snow.View>
                     <Snow.Label center>{bookInfo.metadata.title}</Snow.Label>
                     <Snow.Text center>by {bookInfo.metadata.authors?.at(0) ?? 'Unknown'}</Snow.Text>
@@ -92,6 +115,7 @@ export default function BookDetailsPage() {
                     ? <Snow.ImageButton imageUrl={thumbnail} title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.ImageButton imageUrl={thumbnail} title="Download" onPress={downloadBook} />
                 }
+                {localUri && <Snow.TextButton title="Delete Local" onPress={deleteDownload} />}
             </Snow.Grid>
             <Snow.Text center>{localUri ? `[${prettyPath}]` : 'This book is not yet downloaded'}</Snow.Text>
         </>
