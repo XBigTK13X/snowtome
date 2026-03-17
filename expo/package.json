@@ -1,6 +1,6 @@
 {
   "name": "snowtome",
-  "version": "1.2.1",
+    "version": "1.2.2",
   "scripts": {
     "start": "EXPO_TV=1 expo start",
     "android": "EXPO_TV=1 expo run:android",
@@ -28,6 +28,7 @@
     "react-native-safe-area-context": "5.6.1",
     "react-native-screens": "4.16.0",
     "react-native-web": "0.21.1",
+    "saf-copy": "file:./modules/saf-copy",
     "use-debounce": "10.0.6"
   },
   "devDependencies": {

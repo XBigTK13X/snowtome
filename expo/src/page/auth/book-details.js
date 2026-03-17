@@ -85,7 +85,7 @@ export default function BookDetailsPage() {
         return <Snow.Text>Loading book details</Snow.Text>
     }
 
-    const thumbnail = bookloreClient.getBookThumbnail(bookInfo.id)
+    const thumbnail = bookloreClient.getBookThumbnail(bookInfo.id, bookloreClient.accessToken)
 
     let prettyPath = null
     if (localUri) {
@@ -104,14 +104,16 @@ export default function BookDetailsPage() {
         }
     }
 
+    const downloadTitle = downloadProgress ? `Downloading ${Math.round(downloadProgress * 100)}%` : 'Download'
+
     return (
         <>
             <Snow.Grid itemsPerRow={4}>
                 {localUri
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.TextButton
-                        title={downloadProgress ? `${Math.round(downloadProgress * 100)}%}` : 'Download'}
-                        disabled={downloadProgress}
+                        title={downloadTitle}
+                        disabled={!!downloadProgress}
                         onPress={downloadBook}
                     />
                 }
@@ -134,10 +136,6 @@ export default function BookDetailsPage() {
                     <Snow.Label center>{bookInfo.metadata.title}</Snow.Label>
                     <Snow.Text center>by {bookInfo.metadata.authors?.at(0) ?? 'Unknown'}</Snow.Text>
                 </Snow.View>
-                {localUri
-                    ? <Snow.ImageButton imageUrl={thumbnail} title="Open" onPress={() => openBook(localUri)} />
-                    : <Snow.ImageButton imageUrl={thumbnail} title="Download" onPress={downloadBook} />
-                }
                 {localUri && <Snow.TextButton title="Delete Local" onPress={deleteDownload} />}
             </Snow.Grid>
             <Snow.Text center>{localUri ? `[${prettyPath}]` : 'This book is not yet downloaded'}</Snow.Text>

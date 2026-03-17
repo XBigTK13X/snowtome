@@ -1,14 +1,13 @@
-import Snow from 'expo-snowui'
 import { Platform } from 'react-native'
-import { File, Paths } from 'expo-file-system';
-import * as FileSystem from 'expo-file-system/legacy';
+import { File, Directory, Paths } from 'expo-file-system'
+import * as FileSystem from 'expo-file-system/legacy'
+import { copyToSaf } from '../modules/saf-copy'
 
 const { StorageAccessFramework: SAF } = FileSystem
 
 const LEDGER_KEY = 'download_ledger'
 
 const readLedger = async () => {
-    const FileSystemLegacy = await import('expo-file-system/legacy')
     const ledgerFile = new File(Paths.cache, `${LEDGER_KEY}.json`)
     if (!ledgerFile.exists) return {}
     try {
@@ -25,21 +24,17 @@ const writeLedger = async (ledger) => {
 
 const ensureSubdirectory = async (baseDirUri, subPath) => {
     if (!subPath) return baseDirUri
-
     const segments = subPath.split('/').filter((s) => s.length > 0)
     let currentUri = baseDirUri
-
     for (const segment of segments) {
         const items = await SAF.readDirectoryAsync(currentUri)
         const existing = items.find((uri) => uri.endsWith('%2F' + encodeURIComponent(segment)) || uri.endsWith('/' + segment))
-
         if (existing) {
             currentUri = existing
         } else {
             currentUri = await SAF.makeDirectoryAsync(currentUri, segment)
         }
     }
-
     return currentUri
 }
 
@@ -146,13 +141,15 @@ const downloadFile = async ({
         }
 
         const { fileName, subPath } = getDestination(bookInfo)
+        const normalizedFileName = fileName.replace(/:/g, '_')
         const targetDirUri = await ensureSubdirectory(baseDirUri, subPath)
 
-        const cachedPath = Paths.cache.uri + fileName
+        const cachedFile = new File(Paths.cache, normalizedFileName)
+        if (cachedFile.exists) cachedFile.delete()
 
         const resumable = FileSystem.createDownloadResumable(
             remoteUrl,
-            cachedPath,
+            cachedFile.uri,
             { headers },
             onProgress
                 ? ({ totalBytesWritten, totalBytesExpectedToWrite }) => {
@@ -169,11 +166,9 @@ const downloadFile = async ({
             return
         }
 
-        const safUri = await SAF.createFileAsync(targetDirUri, fileName, 'application/octet-stream')
-        const base64 = await FileSystem.readAsStringAsync(cachedPath, { encoding: FileSystem.EncodingType.Base64 })
-        await FileSystem.writeAsStringAsync(safUri, base64, { encoding: FileSystem.EncodingType.Base64 })
-
-        await FileSystem.deleteAsync(cachedPath, { idempotent: true })
+        const safUri = await SAF.createFileAsync(targetDirUri, normalizedFileName, 'application/octet-stream')
+        await copyToSaf(cachedFile.uri, safUri)
+        cachedFile.delete()
 
         const ledger = await readLedger()
         await writeLedger({ ...ledger, [bookInfo.id]: makeLedgerEntry(bookInfo, safUri) })
@@ -188,7 +183,8 @@ const clearAll = async () => {
     const ledger = await readLedger()
     for (const entry of Object.values(ledger)) {
         try {
-            await FileSystem.deleteAsync(entry.safUri)
+            const file = new File(entry.safUri)
+            if (file.exists) file.delete()
         } catch { }
     }
     const ledgerFile = new File(Paths.cache, `${LEDGER_KEY}.json`)
@@ -200,7 +196,8 @@ const deleteEntry = async (bookId) => {
     const entry = ledger[bookId]
     if (!entry) return
     try {
-        await FileSystem.deleteAsync(entry.safUri)
+        const file = new File(entry.safUri)
+        if (file.exists) file.delete()
     } catch { }
     const { [bookId]: _, ...rest } = ledger
     await writeLedger(rest)
