@@ -66,7 +66,6 @@ export default function BookDetailsPage() {
                     onComplete: (uri) => {
                         setDownloadProgress(null)
                         setLocalUri(uri)
-                        openBook(uri)
                     }
                 })
             })
@@ -84,8 +83,6 @@ export default function BookDetailsPage() {
     if (!bookInfo) {
         return <Snow.Text>Loading book details</Snow.Text>
     }
-
-    const thumbnail = bookloreClient.getBookThumbnail(bookInfo.id, bookloreClient.accessToken)
 
     let prettyPath = null
     if (localUri) {
@@ -136,9 +133,10 @@ export default function BookDetailsPage() {
                     <Snow.Label center>{bookInfo.metadata.title}</Snow.Label>
                     <Snow.Text center>by {bookInfo.metadata.authors?.at(0) ?? 'Unknown'}</Snow.Text>
                 </Snow.View>
-                {localUri && <Snow.TextButton title="Delete Local" onPress={deleteDownload} />}
             </Snow.Grid>
             <Snow.Text center>{localUri ? `[${prettyPath}]` : 'This book is not yet downloaded'}</Snow.Text>
+
+            {localUri && <Snow.Grid><Snow.TextButton title="Delete Local" onPress={deleteDownload} /></Snow.Grid>}
         </>
     )
 }

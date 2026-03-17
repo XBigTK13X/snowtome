@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'expo.modules.safcopy'
+    namespace 'expo.modules.safhelper'
     defaultConfig {
         versionName "1.0.0"
     }

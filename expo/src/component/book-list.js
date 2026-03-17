@@ -8,10 +8,11 @@ export default function BookList(props) {
         <>
             <Snow.Label center>{props?.getHeader?.(currentRoute?.routeParams) ?? 'Books'} [{props.bookList?.length}]</Snow.Label>
             <Snow.Grid key={clientVersion} itemsPerRow={5} items={props.bookList} renderItem={(item) => {
-                const thumbnail = bookloreClient.getBookThumbnail(item.id, bookloreClient.accessToken)
-                let title = item?.metadata?.title
-                if (item?.metadata?.seriesNumber) {
-                    title = `#${item.metadata.seriesNumber} - ${title}`
+                const thumbnail = bookloreClient.getBookThumbnail(item.bookId ?? item.id, bookloreClient.accessToken)
+                let title = item?.metadata?.title ?? item?.title
+                let seriesNumber = item?.metadata?.seriesNumber ?? item.seriesNumber
+                if (seriesNumber) {
+                    title = `#${seriesNumber} - ${title}`
                 }
                 return <Snow.ImageButton
                     title={title}
@@ -21,9 +22,9 @@ export default function BookList(props) {
                         params: {
                             libraryId: item.libraryId,
                             libraryName: item.libraryName,
-                            bookId: item.id,
-                            bookName: item.metadata?.title,
-                            bookKind: item.bookType
+                            bookId: item.id ?? item.bookId,
+                            bookName: item.metadata?.title ?? item.title,
+                            bookKind: item.bookType ?? item.bookKind
                         }
                     })} />
             }} /></>

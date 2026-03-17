@@ -1,5 +1,5 @@
 {
-    "name": "saf-copy",
+    "name": "saf-helper",
     "version": "1.0.0",
     "main": "index.ts"
 }

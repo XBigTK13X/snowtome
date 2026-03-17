@@ -25,9 +25,7 @@ export default function DownloadListPage() {
     return (
         <C.BookList
             getHeader={() => { return "Downloads" }}
-            loadData={(bookloreClient, routeParams) => {
-                return downloads
-            }}
+            bookList={downloads}
         />
     )
 }

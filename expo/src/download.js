@@ -1,7 +1,7 @@
 import { Platform } from 'react-native'
 import { File, Directory, Paths } from 'expo-file-system'
 import * as FileSystem from 'expo-file-system/legacy'
-import { copyToSaf } from '../modules/saf-copy'
+import { downloadToSaf } from '../modules/saf-helper'
 
 const { StorageAccessFramework: SAF } = FileSystem
 
@@ -71,6 +71,8 @@ const makeLedgerEntry = (bookInfo, safUri) => ({
     libraryId: bookInfo.libraryId,
     libraryName: bookInfo.libraryName,
     bookKind: bookInfo.bookType,
+    seriesName: bookInfo?.metadata?.seriesName,
+    seriesNumber: bookInfo?.metadata?.seriesNumber ?? null,
     downloadedAt: Date.now()
 })
 
@@ -144,31 +146,8 @@ const downloadFile = async ({
         const normalizedFileName = fileName.replace(/:/g, '_')
         const targetDirUri = await ensureSubdirectory(baseDirUri, subPath)
 
-        const cachedFile = new File(Paths.cache, normalizedFileName)
-        if (cachedFile.exists) cachedFile.delete()
-
-        const resumable = FileSystem.createDownloadResumable(
-            remoteUrl,
-            cachedFile.uri,
-            { headers },
-            onProgress
-                ? ({ totalBytesWritten, totalBytesExpectedToWrite }) => {
-                    if (totalBytesExpectedToWrite > 0) {
-                        onProgress(totalBytesWritten / totalBytesExpectedToWrite)
-                    }
-                }
-                : undefined
-        )
-
-        const result = await resumable.downloadAsync()
-        if (!result) {
-            console.error("Download failed")
-            return
-        }
-
         const safUri = await SAF.createFileAsync(targetDirUri, normalizedFileName, 'application/octet-stream')
-        await copyToSaf(cachedFile.uri, safUri)
-        cachedFile.delete()
+        await downloadToSaf(remoteUrl, safUri, headers, onProgress)
 
         const ledger = await readLedger()
         await writeLedger({ ...ledger, [bookInfo.id]: makeLedgerEntry(bookInfo, safUri) })

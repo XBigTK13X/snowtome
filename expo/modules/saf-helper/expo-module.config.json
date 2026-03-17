@@ -4,7 +4,7 @@
     ],
     "android": {
         "modules": [
-            "expo.modules.safcopy.SafCopyModule"
+            "expo.modules.safhelper.SafHelperModule"
         ]
     }
 }
