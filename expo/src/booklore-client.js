@@ -66,6 +66,7 @@ const by_alpha = (a, b) => {
 export class BookloreClient {
     constructor(details) {
         this.onApiError = details.onApiError
+        this.clearApiError = details.clearApiError
         this.webApiUrl = details.webApiUrl
         if (this.webApiUrl.indexOf('http') === -1) {
             this.webApiUrl = 'https://' + this.webApiUrl
@@ -74,6 +75,7 @@ export class BookloreClient {
             this.webApiUrl = this.webApiUrl + '/api/v1'
         }
         this.apiErrorSent = false
+        this._heartbeatPromise = null
 
         this.accessToken = null
         this.refreshToken = null
@@ -112,26 +114,33 @@ export class BookloreClient {
     }
 
     heartbeat = async () => {
-        return new Promise(resolve => {
+        if (this._heartbeatPromise) {
+            return this._heartbeatPromise
+        }
+        this._heartbeatPromise = new Promise(resolve => {
             return this.httpGet("/libraries")
                 .then(() => {
-                    return resolve(this.httpClient)
+                    resolve(this)
                 })
-                .catch(err => {
-                    this.webApiUrl = Snow.loadData('bookloreUrl')
-                    let username = Snow.loadData('username')
-                    let password = Snow.loadData('password')
-                    this.httpClient = axios.create({
-                        baseURL: this.webApiUrl,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    this.login(username, password).then(result => {
-                        return resolve(this.httpClient)
+                .catch(() => {
+                    const username = Snow.loadData('username')
+                    const password = Snow.loadData('password')
+                    this.login(username, password).then(() => {
+                        Snow.saveData('bookloreAuth', JSON.stringify({
+                            refreshToken: this.refreshToken,
+                            accessToken: this.accessToken,
+                            username,
+                            webApiUrl: this.webApiUrl
+                        }))
+                        this.apiErrorSent = false
+                        this.clearApiError?.()
+                        resolve(this)
                     })
                 })
+        }).finally(() => {
+            this._heartbeatPromise = null
         })
+        return this._heartbeatPromise
     }
 
     httpGet = async (url, params) => {
@@ -146,6 +155,7 @@ export class BookloreClient {
             })
             .catch((err) => {
                 this.handleError(err)
+                throw err
             })
     }
 
@@ -157,6 +167,7 @@ export class BookloreClient {
             })
             .catch((err) => {
                 this.handleError(err)
+                throw err
             })
     }
 
@@ -188,22 +199,23 @@ export class BookloreClient {
 
     login = (username, password) => {
         return new Promise((resolve) => {
-            return this.httpPost('/auth/login', { username, password })
-                .then((response) => {
-                    Snow.saveData('username', username)
-                    Snow.saveData('password', password)
-                    Snow.saveData('bookloreUrl', this.webApiUrl)
-                    this.accessToken = response.accessToken
-                    this.refreshToken = response.refreshToken
-                    this.httpClient = axios.create({
-                        baseURL: this.webApiUrl,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + this.accessToken
-                        }
-                    })
-                    return resolve(this)
+            return axios.post(`${this.webApiUrl}/auth/login`, { username, password }, {
+                headers: { 'Content-Type': 'application/json' }
+            }).then((response) => {
+                Snow.saveData('username', username)
+                Snow.saveData('password', password)
+                Snow.saveData('bookloreUrl', this.webApiUrl)
+                this.accessToken = response.data.accessToken
+                this.refreshToken = response.data.refreshToken
+                this.httpClient = axios.create({
+                    baseURL: this.webApiUrl,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + this.accessToken
+                    }
                 })
+                return resolve(this)
+            })
         })
     }
 
@@ -230,7 +242,6 @@ export class BookloreClient {
                 })
         })
     }
-
 
     getBookListByLibrary = (libraryId) => {
         return this.readRemoteIfStale(`book-list-${libraryId}`, () => {
@@ -368,8 +379,8 @@ export class BookloreClient {
         })
     }
 
-    getBookThumbnail = (bookId) => {
-        return `${this.webApiUrl}/media/book/${bookId}/thumbnail?token=${this.accessToken}`
+    getBookThumbnail = (bookId, token) => {
+        return `${this.webApiUrl}/media/book/${bookId}/thumbnail?token=${token}`
     }
 
     search(query) {

@@ -108,6 +108,7 @@ const downloadFile = async ({
     token,
     downloadDirectory,
     updateDownloadDirectory,
+    onProgress,
     onComplete
 }) => {
     const headers = {
@@ -147,25 +148,32 @@ const downloadFile = async ({
         const { fileName, subPath } = getDestination(bookInfo)
         const targetDirUri = await ensureSubdirectory(baseDirUri, subPath)
 
-        const response = await fetch(remoteUrl, { headers })
-        if (!response.ok) {
-            console.error("Download failed with status:", response.status)
+        const cachedPath = Paths.cache.uri + fileName
+
+        const resumable = FileSystem.createDownloadResumable(
+            remoteUrl,
+            cachedPath,
+            { headers },
+            onProgress
+                ? ({ totalBytesWritten, totalBytesExpectedToWrite }) => {
+                    if (totalBytesExpectedToWrite > 0) {
+                        onProgress(totalBytesWritten / totalBytesExpectedToWrite)
+                    }
+                }
+                : undefined
+        )
+
+        const result = await resumable.downloadAsync()
+        if (!result) {
+            console.error("Download failed")
             return
         }
 
-        const buffer = await response.arrayBuffer()
-        const bytes = new Uint8Array(buffer)
-
-        const cachedFile = new File(Paths.cache, fileName)
-        if (cachedFile.exists) cachedFile.delete()
-        cachedFile.create()
-        cachedFile.write(bytes)
-
         const safUri = await SAF.createFileAsync(targetDirUri, fileName, 'application/octet-stream')
-        const base64 = await FileSystem.readAsStringAsync(cachedFile.uri, { encoding: FileSystem.EncodingType.Base64 })
+        const base64 = await FileSystem.readAsStringAsync(cachedPath, { encoding: FileSystem.EncodingType.Base64 })
         await FileSystem.writeAsStringAsync(safUri, base64, { encoding: FileSystem.EncodingType.Base64 })
 
-        cachedFile.delete()
+        await FileSystem.deleteAsync(cachedPath, { idempotent: true })
 
         const ledger = await readLedger()
         await writeLedger({ ...ledger, [bookInfo.id]: makeLedgerEntry(bookInfo, safUri) })

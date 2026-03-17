@@ -38,13 +38,17 @@ export function AppContextProvider(props) {
             setApiError(err)
         }
     }
+    const clearApiError = () => setApiError(null)
+
     const [booklore, setBooklore] = React.useState(null)
     const [authed, setAuthed] = React.useState(false)
     const [downloadDirectory, setDownloadDirectory] = React.useState(null)
+    const [clientVersion, setClientVersion] = React.useState(0)
 
     const onLogin = (webApiUrl, username, password) => {
         const client = new BookloreClient({
             onApiError,
+            clearApiError,
             webApiUrl,
             username,
             password
@@ -72,12 +76,22 @@ export function AppContextProvider(props) {
         setDownloadDirectory(uri)
     }
 
+    const refreshClient = () => {
+        return new Promise((resolve) => {
+            booklore.heartbeat().then((freshClient) => {
+                setClientVersion(v => v + 1)
+                resolve(freshClient)
+            })
+        })
+    }
+
     React.useEffect(() => {
         let bookloreAuth = Snow.loadData('bookloreAuth')
         if (bookloreAuth) {
             bookloreAuth = JSON.parse(bookloreAuth)
             const client = new BookloreClient({
                 onApiError,
+                clearApiError,
                 webApiUrl: bookloreAuth.webApiUrl,
                 accessToken: bookloreAuth.accessToken,
                 refreshToken: bookloreAuth.refreshToken
@@ -119,11 +133,13 @@ export function AppContextProvider(props) {
 
     const appContext = {
         config,
+        clientVersion,
         routes,
         bookloreClient: booklore,
         authed,
         onLogin,
         onLogout,
+        refreshClient,
         downloadDirectory,
         updateDownloadDirectory,
     }

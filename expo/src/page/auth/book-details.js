@@ -50,16 +50,21 @@ export default function BookDetailsPage() {
         })
     }
 
+    const [downloadProgress, setDownloadProgress] = C.React.useState(null)
+
     const downloadBook = () => {
         bookloreClient.getBookContentUrl(currentRoute.routeParams.bookId)
             .then(response => {
+                setDownloadProgress(0)
                 C.download.downloadFile({
                     bookInfo: bookInfoRef.current,
                     remoteUrl: response.downloadUrl,
                     token: response.authToken,
                     downloadDirectory,
                     updateDownloadDirectory,
+                    onProgress: setDownloadProgress,
                     onComplete: (uri) => {
+                        setDownloadProgress(null)
                         setLocalUri(uri)
                         openBook(uri)
                     }
@@ -104,7 +109,11 @@ export default function BookDetailsPage() {
             <Snow.Grid itemsPerRow={4}>
                 {localUri
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
-                    : <Snow.TextButton title="Download" onPress={downloadBook} />
+                    : <Snow.TextButton
+                        title={downloadProgress ? `${Math.round(downloadProgress * 100)}%}` : 'Download'}
+                        disabled={downloadProgress}
+                        onPress={downloadBook}
+                    />
                 }
                 <Snow.TextButton title="Mark Read" onPress={toggleRead} />
                 {author ? <Snow.TextButton title={author} onPress={navPush({

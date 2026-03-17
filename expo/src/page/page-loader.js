@@ -36,7 +36,15 @@ const SnowApp = Snow.createSnowApp({
 
 function PageWrapper() {
     const { CurrentPage, currentRoute } = Snow.useSnowContext()
-    const { routes } = useAppContext()
+    const { refreshClient, routes, bookloreClient } = useAppContext()
+
+    React.useEffect(() => {
+        if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
+            return
+        }
+        refreshClient()
+    }, [currentRoute])
+
     if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
         return <CurrentPage />
     }
