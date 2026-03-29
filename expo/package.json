@@ -1,6 +1,6 @@
 {
   "name": "snowtome",
-    "version": "1.2.4",
+    "version": "1.2.5",
   "scripts": {
     "start": "EXPO_TV=1 expo start",
     "android": "EXPO_TV=1 expo run:android",
@@ -20,7 +20,7 @@
     "expo-linking": "8.0.11",
     "expo-secure-store": "^15.0.7",
     "expo-sharing": "^14.0.8",
-    "expo-snowui": "^1.7.34",
+    "expo-snowui": "^1.7.57",
     "expo-splash-screen": "31.0.12",
     "react": "19.1.0",
     "react-dom": "19.1.0",
