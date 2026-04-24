@@ -1,6 +1,6 @@
 import pkg from "../../package.json";
 import React from 'react'
-import { View } from 'react-native'
+import { Platform } from 'react-native'
 import Snow from 'expo-snowui'
 import {
     config,
@@ -55,7 +55,7 @@ export default function PageLoader() {
     return (
         <SnowApp
             DEBUG_SNOW={config.debugSnowui}
-            ENABLE_FOCUS={false}
+            ENABLE_FOCUS={Platform.isTV}
             snowStyle={appStyle}
             routePaths={routes}
             routePages={pages}

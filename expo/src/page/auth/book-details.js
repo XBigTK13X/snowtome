@@ -114,6 +114,12 @@ export default function BookDetailsPage() {
                         onPress={downloadBook}
                     />
                 }
+                <Snow.TextButton title="Read Online" onPress={navPush({
+                    path: routes.bookRead,
+                    params: {
+                        bookId: currentRoute.routeParams.bookId
+                    }
+                })} />
                 <Snow.TextButton title="Mark Read" onPress={toggleRead} />
                 {author ? <Snow.TextButton title={author} onPress={navPush({
                     path: routes.authorDetails,

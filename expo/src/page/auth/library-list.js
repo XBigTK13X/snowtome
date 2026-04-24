@@ -1,7 +1,7 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
 
-export default function LibraryListPage() {
+export default function LibraryListPage(props) {
     const { navPush } = Snow.useSnowContext()
     const { routes, bookloreClient } = C.useAppContext()
     const [libraryList, setLibraryList] = C.React.useState(null)
@@ -17,7 +17,7 @@ export default function LibraryListPage() {
     }
 
     return (
-        <>
+        <Snow.View {...props}>
             <Snow.Label center>Libraries [{libraryList?.length}]</Snow.Label>
             <Snow.Grid itemsPerRow={3} items={libraryList} renderItem={(item) => {
                 return <Snow.TextButton
@@ -30,6 +30,6 @@ export default function LibraryListPage() {
                         }
                     })} />
             }} />
-        </>
+        </Snow.View>
     )
 }

@@ -7,9 +7,9 @@ export default function LibraryListPage() {
     const { navPush } = Snow.useSnowContext()
 
     const [form, setForm] = C.React.useState({
-        bookloreUrl: '',
-        bookloreUsername: '',
-        booklorePassword: ''
+        bookloreUrl: 'https://booklore.9914.us',
+        bookloreUsername: C.isTV ? 'kids' : '',
+        booklorePassword: C.isTV ? 'KidsKids' : ''
     })
 
     const changeForm = (k) => {
@@ -37,7 +37,7 @@ export default function LibraryListPage() {
     }, [authed])
 
     return (
-        <C.View>
+        <Snow.View>
             <Snow.Header>Booklore</Snow.Header>
             <Snow.Grid itemsPerRow={2}>
                 <Snow.Label>Server URL</Snow.Label>
@@ -57,6 +57,6 @@ export default function LibraryListPage() {
                     bottom: -250
                 }}>{`v${config.clientVersion} - built ${config.clientBuildDate}`}</Snow.Text>
             </C.View>
-        </C.View>
+        </Snow.View>
     )
 }

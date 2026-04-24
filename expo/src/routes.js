@@ -4,6 +4,7 @@ export var routes = {
     authorDetails: '/auth/wrap/author/details',
     authorList: '/auth/wrap/author/list',
     bookDetails: '/auth/wrap/book',
+    bookRead: '/auth/wrap/book/read',
     categoryDetails: '/auth/wrap/category/details',
     downloadList: '/auth/wrap/download/list',
     landing: '/auth/landing',

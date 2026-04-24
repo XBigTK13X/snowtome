@@ -11,7 +11,7 @@ import {
     View,
 } from 'react-native'
 
-import {
+import Snow, {
     Image
 } from 'expo-snowui'
 
@@ -47,5 +47,6 @@ export default {
     ScrollView,
     TouchableOpacity,
     View,
-    BookList
+    BookList,
+    Snow
 }

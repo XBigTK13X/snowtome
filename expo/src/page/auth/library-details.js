@@ -45,12 +45,12 @@ export default function LibraryDetailsPage() {
         )
     }
     return (
-        <>
+        <Snow.View>
             {viewPicker}
             <C.BookList
                 getHeader={(routeParams) => { return `Library - ${currentRoute?.routeParams?.libraryName}` }}
                 bookList={libraryDetails.bookList}
             />
-        </>
+        </Snow.View>
     )
 }

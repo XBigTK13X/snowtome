@@ -371,16 +371,19 @@ export class BookloreClient {
     }
 
     getBookDetails = (bookId) => {
-        return new Promise((resolve) => {
-            return this.httpGet(`/books/${bookId}`)
-                .then((response) => {
-                    resolve(response)
-                })
-        })
+        return this.httpGet(`/books/${bookId}`)
     }
 
     getBookThumbnail = (bookId, token) => {
         return `${this.webApiUrl}/media/book/${bookId}/thumbnail?token=${token}`
+    }
+
+    getCbzPagesInfo = (bookId) => {
+        return this.httpGet(`/cbx/${bookId}/page-info`)
+    }
+
+    getCbzPageImage = (bookId, pageNumber, token) => {
+        return `${this.webApiUrl}/media/book/${bookId}/cbx/pages/${pageNumber}?token=${token}`
     }
 
     search(query) {
