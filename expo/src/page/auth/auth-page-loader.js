@@ -20,14 +20,14 @@ export default function AuthPageLoader(props) {
         return null
     }
 
-    const pageKey = `${currentRoute.routePath}-${Snow.stringifySafe(currentRoute.routeParams)}`
+    const pageKey = `${currentRoute.routePath}`
 
     let header = null
     if (currentRoute.routePath.includes('/wrap/')) {
         header = (
             <Snow.View yy={0}>
                 <Snow.Grid>
-                    <Snow.TextButton title="Home" onPress={navPush({ path: routes.landing })} />
+                    <Snow.TextButton focusStart title="Home" onPress={navPush({ path: routes.landing })} />
                     <Snow.TextButton title="Back" onPress={navPop(true)} />
                 </Snow.Grid>
                 <Snow.Break />

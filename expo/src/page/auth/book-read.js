@@ -12,7 +12,7 @@ export default function BookDetailsPage(props) {
         removeActionListener,
         openOverlay,
         closeOverlay
-    } = C.useSnowContext()
+    } = Snow.useSnowContext()
     const {
         bookloreClient,
         routes
@@ -81,7 +81,7 @@ export default function BookDetailsPage(props) {
             source={imageSource} />
     )
     if (showTwoPages) {
-        if (pageNumber + 1 < pages.length) {
+        if (pageNumber + 1 < pagesInfo.length) {
             const secondImageSource = bookloreClient.getCbzPageImage(currentRoute.routeParams.bookId, pageNumber + 1, bookloreClient.accessToken)
             images = (
                 <C.View
@@ -110,9 +110,9 @@ export default function BookDetailsPage(props) {
     if (showCount) {
         countDisplay = (
             <C.View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                <C.SnowText style={{ margin: 0, padding: 15, backgroundColor: 'black', color: 'white' }}>
-                    {`Page ${pageNumber} of ${pages.length}`}
-                </C.SnowText>
+                <Snow.Text style={{ margin: 0, padding: 15, backgroundColor: 'black', color: 'white' }}>
+                    {`Page ${pageNumber} of ${pagesInfo.length}`}
+                </Snow.Text>
             </C.View>
         )
     }
@@ -166,8 +166,8 @@ export default function BookDetailsPage(props) {
                 }
             },
             render: () => {
-                if (!pages) {
-                    return <C.SnowText>Loading pages...</C.SnowText>
+                if (!pagesInfo) {
+                    return <Snow.Text>Loading pages...</Snow.Text>
                 }
                 return (
                     <>
@@ -180,7 +180,7 @@ export default function BookDetailsPage(props) {
         return () => {
             popModal()
         }
-    }, [pages, pageNumber, showTwoPages, showCount])
+    }, [pagesInfo, pageNumber, showTwoPages, showCount])
 
     return null
 }

@@ -24,6 +24,7 @@ export default function DownloadListPage() {
 
     return (
         <C.BookList
+            focusStart
             getHeader={() => { return "Downloads" }}
             bookList={downloads}
         />

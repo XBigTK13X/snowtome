@@ -1,6 +1,7 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
-export default function BookListPage() {
+
+export default function BookListPage(props) {
     const { routes, apiClient } = C.useAppContext()
     const localParams = C.useLocalSearchParams()
     const [bookList, setBookList] = C.React.useState(null)
@@ -18,9 +19,9 @@ export default function BookListPage() {
     }
 
     return (
-        <C.FillView>
+        <Snow.View {...props}>
             <Snow.Label center>{localParams.seriesName}</Snow.Label>
-            <Snow.Grid itemsPerRow={7} items={bookList} renderItem={(item) => {
+            <Snow.Grid focusStart itemsPerRow={7} items={bookList} renderItem={(item) => {
                 const thumbnail = apiClient.getBookThumbnail(item.id)
                 let title = item.name
                 const dashIndex = title.indexOf(' - ')
@@ -32,6 +33,6 @@ export default function BookListPage() {
                     imageSource={thumbnail}
                     onPress={routes.func(routes.bookDetails, { bookId: item.id })} />
             }} />
-        </C.FillView>
+        </Snow.View>
     )
 }

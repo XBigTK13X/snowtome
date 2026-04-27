@@ -1,7 +1,7 @@
 import Snow from 'expo-snowui'
 import { C, useAppContext } from 'snowtome'
 
-export default function SearchPage() {
+export default function SearchPage(props) {
     const { bookloreClient, routes } = useAppContext()
     const { navPush, currentRoute } = Snow.useSnowContext()
 
@@ -119,7 +119,8 @@ export default function SearchPage() {
 
     return (
         <Snow.Grid
-            assignFocus={false}
+            {...props}
+            focusStart={true}
             itemsPerRow={1}>
             <Snow.Label>Enter a search query</Snow.Label>
             <Snow.Input

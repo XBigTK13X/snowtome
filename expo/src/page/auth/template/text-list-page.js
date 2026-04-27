@@ -20,9 +20,9 @@ export default function TestListPage(props) {
     }
 
     return (
-        <>
+        <Snow.View {...props}>
             <Snow.Label center>{props.title} [{resultList?.length}]</Snow.Label>
-            <Snow.Grid itemsPerRow={4} items={resultList} renderItem={(item) => {
+            <Snow.Grid focusStart itemsPerRow={4} items={resultList} renderItem={(item) => {
                 return <Snow.TextButton
                     title={item}
                     onPress={navPush({
@@ -30,6 +30,6 @@ export default function TestListPage(props) {
                         params: props.routeParams(item)
                     })} />
             }} />
-        </>
+        </Snow.View>
     )
 }

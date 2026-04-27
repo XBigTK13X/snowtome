@@ -43,7 +43,7 @@ function PageWrapper() {
             return
         }
         refreshClient()
-    }, [currentRoute])
+    }, [currentRoute.routePath])
 
     if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
         return <CurrentPage />

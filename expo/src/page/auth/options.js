@@ -1,7 +1,7 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
 
-export default function OptionsPage() {
+export default function OptionsPage(props) {
 
     const [status, setStatus] = C.React.useState('')
 
@@ -12,11 +12,11 @@ export default function OptionsPage() {
     }
 
     return (
-        <>
-            <Snow.Grid>
+        <Snow.View {...props}>
+            <Snow.Grid focusStart>
                 <Snow.TextButton title="Clear Downloads" onPress={clearDownloads} />
             </Snow.Grid>
             <Snow.Label center>{status}</Snow.Label>
-        </>
+        </Snow.View>
     )
 }

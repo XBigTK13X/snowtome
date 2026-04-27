@@ -19,7 +19,7 @@ export default function LibraryListPage(props) {
     return (
         <Snow.View {...props}>
             <Snow.Label center>Libraries [{libraryList?.length}]</Snow.Label>
-            <Snow.Grid itemsPerRow={3} items={libraryList} renderItem={(item) => {
+            <Snow.Grid focusStart itemsPerRow={3} items={libraryList} renderItem={(item) => {
                 return <Snow.TextButton
                     title={item.name}
                     onPress={navPush({

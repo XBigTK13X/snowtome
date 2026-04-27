@@ -2,7 +2,7 @@ import Snow from 'expo-snowui'
 import C from '../../common'
 import * as IntentLauncher from 'expo-intent-launcher';
 
-export default function BookDetailsPage() {
+export default function BookDetailsPage(props) {
     const {
         bookloreClient,
         downloadDirectory,
@@ -104,8 +104,8 @@ export default function BookDetailsPage() {
     const downloadTitle = downloadProgress ? `Downloading ${Math.round(downloadProgress * 100)}%` : 'Download'
 
     return (
-        <>
-            <Snow.Grid itemsPerRow={4}>
+        <Snow.View {...props}>
+            <Snow.Grid focusStart itemsPerRow={4}>
                 {localUri
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.TextButton
@@ -143,6 +143,6 @@ export default function BookDetailsPage() {
             <Snow.Text center>{localUri ? `[${prettyPath}]` : 'This book is not yet downloaded'}</Snow.Text>
 
             {localUri && <Snow.Grid><Snow.TextButton title="Delete Local" onPress={deleteDownload} /></Snow.Grid>}
-        </>
+        </Snow.View>
     )
 }

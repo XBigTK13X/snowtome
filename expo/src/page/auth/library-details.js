@@ -1,7 +1,7 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
 
-export default function LibraryDetailsPage() {
+export default function LibraryDetailsPage(props) {
     const { navPush, currentRoute, navUpdate } = Snow.useSnowContext()
     const { routes, bookloreClient } = C.useAppContext()
     const [libraryDetails, setLibraryDetails] = C.React.useState(null)
@@ -45,9 +45,10 @@ export default function LibraryDetailsPage() {
         )
     }
     return (
-        <Snow.View>
+        <Snow.View {...props}>
             {viewPicker}
             <C.BookList
+                focusStart
                 getHeader={(routeParams) => { return `Library - ${currentRoute?.routeParams?.libraryName}` }}
                 bookList={libraryDetails.bookList}
             />

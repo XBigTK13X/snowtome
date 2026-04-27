@@ -2,7 +2,7 @@ import Snow from 'expo-snowui'
 import C from '../common'
 import { config } from '../settings'
 
-export default function LibraryListPage() {
+export default function LibraryListPage(props) {
     const { routes, onLogin, authed } = C.useAppContext()
     const { navPush } = Snow.useSnowContext()
 
@@ -37,7 +37,7 @@ export default function LibraryListPage() {
     }, [authed])
 
     return (
-        <Snow.View>
+        <Snow.View {...props}>
             <Snow.Header>Booklore</Snow.Header>
             <Snow.Grid itemsPerRow={2}>
                 <Snow.Label>Server URL</Snow.Label>
@@ -48,7 +48,7 @@ export default function LibraryListPage() {
                 <Snow.Input onValueChange={changeForm('booklorePassword')} value={form.booklorePassword} />
             </Snow.Grid>
             <Snow.Grid>
-                <Snow.TextButton title="Login" onPress={submitLogin} />
+                <Snow.TextButton focusStart title="Login" onPress={submitLogin} />
             </Snow.Grid>
             <C.View>
                 <Snow.Text style={{
