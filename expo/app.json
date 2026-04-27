@@ -37,7 +37,7 @@
     },
     "splash": {
       "image": "./assets/icon/splash.png",
-      "backgroundColor": "#9ec0e6"
+      "backgroundColor": "#2cdb72"
     },
     "newArchEnabled": true,
     "name": "snowtome",
