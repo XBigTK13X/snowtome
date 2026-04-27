@@ -4,15 +4,19 @@ export default function LibraryListPage(props) {
     const { navPush } = Snow.useSnowContext()
     const { routes } = C.useAppContext()
 
+    let readerDebug = <Snow.TextButton title='Debug' onPress={navPush({
+        path: routes.bookRead,
+        params: {
+            bookId: 9332
+        }
+    })} />
+
+    readerDebug = null
+
     return (
         <Snow.View {...props}>
             <Snow.Grid focusStart itemsPerRow={3}>
-                <Snow.TextButton title='Debug' onPress={navPush({
-                    path: routes.bookRead,
-                    params: {
-                        bookId: 9332
-                    }
-                })} />
+                {readerDebug}
                 <Snow.TextButton title='Downloads' onPress={navPush({ path: routes.downloadList })} />
                 <Snow.TextButton title='Library' onPress={navPush({ path: routes.libraryList })} />
                 <Snow.TextButton title='Series' onPress={navPush({ path: routes.seriesList })} />

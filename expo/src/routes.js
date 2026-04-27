@@ -1,4 +1,6 @@
-export var routes = {
+import { Platform } from 'react-native'
+
+let routesInner = {
     login: '/login',
 
     authorDetails: '/auth/wrap/author/details',
@@ -16,6 +18,12 @@ export var routes = {
     seriesList: '/auth/wrap/series/list',
     titleList: '/auth/wrap/title/list'
 }
+
+if (Platform.isTV) {
+    routesInner.bookDetails = routesInner.bookRead
+}
+
+export const routes = routesInner
 
 export function QuietReactWarning() {
     return null

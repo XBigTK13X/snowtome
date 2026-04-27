@@ -176,14 +176,18 @@ function ZoomableImage({ children }) {
                     } else if (startX > rightBorder && endX > rightBorder) {
                         onNextPage.current?.()
                     }
-                } else if (dY > SWIPE_THRESHOLD_Y && Math.abs(dX) < SWIPE_THRESHOLD_X) {
-                    onSwipeDown.current?.()
-                } else if (dY < -SWIPE_THRESHOLD_Y && Math.abs(dX) < SWIPE_THRESHOLD_X) {
-                    onSwipeUp.current?.()
-                } else if (dX > SWIPE_THRESHOLD_X) {
-                    onPreviousPage.current?.()
-                } else if (dX < -SWIPE_THRESHOLD_X) {
-                    onNextPage.current?.()
+                } else if (Math.abs(dY) >= Math.abs(dX)) {
+                    if (dY > SWIPE_THRESHOLD_Y) {
+                        onSwipeDown.current?.()
+                    } else if (dY < -SWIPE_THRESHOLD_Y) {
+                        onSwipeUp.current?.()
+                    }
+                } else {
+                    if (dX > SWIPE_THRESHOLD_X) {
+                        onPreviousPage.current?.()
+                    } else if (dX < -SWIPE_THRESHOLD_X) {
+                        onNextPage.current?.()
+                    }
                 }
             },
         })
@@ -236,6 +240,7 @@ export default function BookDetailsPage(props) {
     const [pageNumber, setPageNumber] = C.React.useState(1)
     const pageNumberRef = C.React.useRef(1)
     const maxPageNumberRef = C.React.useRef(2)
+    const [showPagePicker, setShowPagePicker] = C.React.useState(false)
 
     C.React.useEffect(() => {
         bookloreClient.getCbzPagesInfo(currentRoute.routeParams.bookId).then((response) => {
@@ -324,17 +329,41 @@ export default function BookDetailsPage(props) {
         )
     }
 
-    const gestureContent = (
-        <ZoomableImage>
-            <ZoomableImageBinder
-                onNextPage={nextPage}
-                onPreviousPage={previousPage}
-                onSwipeUp={() => setShowCount(false)}
-                onSwipeDown={() => setShowCount(true)}
-            />
-            {images}
-        </ZoomableImage>
-    )
+    let modalContent = images
+
+    if (!C.isTV) {
+        if (showPagePicker) {
+            modalContent = (
+                <Snow.Grid items={pagesInfo} renderItem={(pageInfo, itemIndex) => {
+                    let pageDisplay = pageInfo?.pageNumber
+                    if (pageDisplay > 1) {
+                        pageDisplay *= 2
+                    }
+                    return (
+                        <Snow.TextButton title={pageDisplay} onPress={() => {
+                            setPageNumber(pageInfo?.pageNumber)
+                            setShowPagePicker(false)
+                        }} />
+                    )
+                }} />
+            )
+        } else {
+            modalContent = (
+                <>
+                    <ZoomableImage>
+                        <ZoomableImageBinder
+                            onNextPage={nextPage}
+                            onPreviousPage={previousPage}
+                            onSwipeUp={() => setShowPagePicker(true)}
+                            onSwipeDown={() => setShowCount(prev => { return !prev })}
+                        />
+                        {images}
+                    </ZoomableImage>
+                    <C.View style={{ marginTop: 55 }} />
+                </>
+            )
+        }
+    }
 
     C.React.useEffect(() => {
         const actionListenerKey = addActionListener('book-pages', {
@@ -369,12 +398,12 @@ export default function BookDetailsPage(props) {
             },
             render: () => {
                 if (!pagesInfo) {
-                    return <Snow.Text>Loading pages...</Snow.Text>
+                    return <Snow.Header center>Loading pages...</Snow.Header>
                 }
                 return (
                     <>
                         {countDisplay}
-                        {C.isTV ? images : gestureContent}
+                        {modalContent}
                     </>
                 )
             }
@@ -382,7 +411,7 @@ export default function BookDetailsPage(props) {
         return () => {
             popModal()
         }
-    }, [pagesInfo, pageNumber, showTwoPages, showCount])
+    }, [pagesInfo, pageNumber, showTwoPages, showCount, showPagePicker])
 
     return null
 }

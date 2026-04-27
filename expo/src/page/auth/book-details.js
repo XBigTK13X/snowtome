@@ -14,9 +14,27 @@ export default function BookDetailsPage(props) {
     const [bookInfo, setBookInfo] = C.React.useState(null)
     const bookInfoRef = C.React.useRef(null)
     const [localUri, setLocalUri] = C.React.useState(null)
+    const [fileKind, setFileKind] = C.React.useState(null)
+    const fileKindRef = C.React.useRef(null)
+    const [fileMime, setFileMime] = C.React.useState(null)
+    const fileMimeRef = C.React.useRef(null)
 
     C.React.useEffect(() => {
         bookloreClient.getBookDetails(currentRoute.routeParams.bookId).then((response) => {
+            const mimeTypes = {
+                epub: 'application/epub+zip',
+                pdf: 'application/pdf',
+                cbz: 'application/x-cbz',
+                cbr: 'application/x-cbr',
+                mobi: 'application/x-mobipocket-ebook',
+                azw3: 'application/x-mobi8-ebook',
+            }
+            const ext = response.primaryFile.filePath.split('.').pop().toLowerCase()
+            setFileKind(ext)
+            fileKindRef.current = ext
+            const mime = mimeTypes[ext] ?? 'application/octet-stream'
+            setFileMime(mime)
+            fileMimeRef.current = mime
             setBookInfo(response)
         })
     }, [])
@@ -33,20 +51,10 @@ export default function BookDetailsPage(props) {
     }, [bookInfo])
 
     const openBook = (uri) => {
-        const mimeTypes = {
-            epub: 'application/epub+zip',
-            pdf: 'application/pdf',
-            cbz: 'application/x-cbz',
-            cbr: 'application/x-cbr',
-            mobi: 'application/x-mobipocket-ebook',
-            azw3: 'application/x-mobi8-ebook',
-        }
-        const ext = bookInfo.primaryFile.filePath.split('.').pop().toLowerCase()
-        const type = mimeTypes[ext] ?? 'application/octet-stream'
         IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
             data: uri,
             flags: 1,
-            type
+            type: fileMimeRef.current
         })
     }
 
@@ -114,12 +122,12 @@ export default function BookDetailsPage(props) {
                         onPress={downloadBook}
                     />
                 }
-                <Snow.TextButton title="Read Online" onPress={navPush({
+                {fileKindRef.current === 'cbz' || fileKindRef.current === 'cbr' ? <Snow.TextButton title="Read Online" onPress={navPush({
                     path: routes.bookRead,
                     params: {
                         bookId: currentRoute.routeParams.bookId
                     }
-                })} />
+                })} /> : null}
                 <Snow.TextButton title="Mark Read" onPress={toggleRead} />
                 {author ? <Snow.TextButton title={author} onPress={navPush({
                     path: routes.authorDetails,
