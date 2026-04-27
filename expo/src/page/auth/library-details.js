@@ -28,10 +28,10 @@ export default function LibraryDetailsPage(props) {
     }
     if (libraryView === 'series') {
         return (
-            <>
+            <Snow.View {...props}>
                 {viewPicker}
                 <Snow.Label center>Series [{libraryDetails.seriesList.length}]</Snow.Label>
-                <Snow.Grid itemsPerRow={4} items={libraryDetails.seriesList} renderItem={(item) => {
+                <Snow.Grid focusStart itemsPerRow={4} items={libraryDetails.seriesList} renderItem={(item) => {
                     return <Snow.TextButton
                         title={item}
                         onPress={navPush({
@@ -41,7 +41,7 @@ export default function LibraryDetailsPage(props) {
                             }
                         })} />
                 }} />
-            </>
+            </Snow.View>
         )
     }
     return (

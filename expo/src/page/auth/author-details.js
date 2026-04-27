@@ -1,14 +1,17 @@
+import Snow from 'expo-snowui'
 import BookListPage from './template/book-list-page'
 
-export default function AuthorDetailsPage() {
+export default function AuthorDetailsPage(props) {
     return (
-        <BookListPage
-            getHeader={(routeParams) => {
-                return `Books by ${routeParams.authorName}`
-            }}
-            loadData={(bookloreClient, routeParams) => {
-                return bookloreClient.getBookListByAuthor(routeParams.authorName)
-            }}
-        />
+        <Snow.View {...props}>
+            <BookListPage
+                getHeader={(routeParams) => {
+                    return `Books by ${routeParams.authorName}`
+                }}
+                loadData={(bookloreClient, routeParams) => {
+                    return bookloreClient.getBookListByAuthor(routeParams.authorName)
+                }}
+            />
+        </Snow.View>
     )
 }

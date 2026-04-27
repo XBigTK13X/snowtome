@@ -1,11 +1,14 @@
+import Snow from 'expo-snowui'
 import BookListPage from './template/book-list-page'
 
-export default function TitleListPage() {
+export default function TitleListPage(props) {
     return (
-        <BookListPage
-            loadData={(bookloreClient, routeParams) => {
-                return bookloreClient.getBookListByTitle()
-            }}
-        />
+        <Snow.View {...props}>
+            <BookListPage
+                loadData={(bookloreClient, routeParams) => {
+                    return bookloreClient.getBookListByTitle()
+                }}
+            />
+        </Snow.View>
     )
 }

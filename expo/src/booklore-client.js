@@ -254,6 +254,7 @@ export class BookloreClient {
                             if (item.libraryId === libraryId) {
                                 const series = item?.metadata?.seriesName
                                 if (series && !seriesDedupe.hasOwnProperty(series)) {
+                                    //TODO This is where we can grab a series cover
                                     librarySeries.push(series)
                                     seriesDedupe[series] = true
                                 }

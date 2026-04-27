@@ -1,7 +1,7 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
 
-export default function DownloadListPage() {
+export default function DownloadListPage(props) {
     const { navPush } = Snow.useSnowContext()
     const { routes, bookloreClient } = C.useAppContext()
 
@@ -23,10 +23,12 @@ export default function DownloadListPage() {
     }
 
     return (
-        <C.BookList
-            focusStart
-            getHeader={() => { return "Downloads" }}
-            bookList={downloads}
-        />
+        <Snow.View {...props}>
+            <C.BookList
+                focusStart
+                getHeader={() => { return "Downloads" }}
+                bookList={downloads}
+            />
+        </Snow.View>
     )
 }
