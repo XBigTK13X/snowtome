@@ -43,6 +43,6 @@
     "name": "snowtome",
     "slug": "snowtome",
     "scheme": "com.simplepathstudios.snowtome",
-    "icon": "./assets/icon/icon.png"
+    "icon": "./assets/icon/appicon.png"
   }
 }

@@ -5,7 +5,7 @@ export default function BookList(props) {
     const { navPush, currentRoute } = Snow.useSnowContext()
     const { bookloreClient, routes, clientVersion } = useAppContext()
     return (
-        <>
+        <Snow.View {...props}>
             <Snow.Label center>{props?.getHeader?.(currentRoute?.routeParams) ?? 'Books'} [{props.bookList?.length}]</Snow.Label>
             <Snow.Grid focusStart={props.focusStart} key={clientVersion} itemsPerRow={5} items={props.bookList} renderItem={(item) => {
                 const thumbnail = bookloreClient.getBookThumbnail(item.bookId ?? item.id, bookloreClient.accessToken)
@@ -27,6 +27,7 @@ export default function BookList(props) {
                             bookKind: item.bookType ?? item.bookKind
                         }
                     })} />
-            }} /></>
+            }} />
+        </Snow.View>
     )
 }

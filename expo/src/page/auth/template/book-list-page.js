@@ -19,9 +19,12 @@ export default function BookListPage(props) {
     }
 
     return (
-        <C.BookList
-            bookList={bookList}
-            getHeader={props.getHeader}
-        />
+        <Snow.View {...props}>
+            <C.BookList
+                focusStart
+                bookList={bookList}
+                getHeader={props.getHeader}
+            />
+        </Snow.View>
     )
 }
