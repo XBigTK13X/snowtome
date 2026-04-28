@@ -6,10 +6,12 @@ export default function LibraryDetailsPage(props) {
     const { routes, bookloreClient } = C.useAppContext()
     const [libraryDetails, setLibraryDetails] = C.React.useState(null)
     const libraryView = currentRoute?.routeParams?.libraryView ?? 'book'
+    const [coverSeed, setCoverSeed] = C.React.useState(null)
 
     C.React.useEffect(() => {
         bookloreClient.getBookListByLibrary(currentRoute?.routeParams?.libraryId).then((response) => {
             setLibraryDetails(response)
+            setCoverSeed(Math.random())
         })
     }, [])
 
@@ -31,13 +33,16 @@ export default function LibraryDetailsPage(props) {
             <Snow.View {...props}>
                 {viewPicker}
                 <Snow.Label center>Series [{libraryDetails.seriesList.length}]</Snow.Label>
-                <Snow.Grid focusStart itemsPerRow={4} items={libraryDetails.seriesList} renderItem={(item) => {
-                    return <Snow.TextButton
-                        title={item}
+                <Snow.Grid focusKey={"series"} focusStart itemsPerRow={4} items={libraryDetails.seriesList} renderItem={(seriesName) => {
+                    let coverId = libraryDetails.seriesBooks[seriesName].at(Math.floor(coverSeed * libraryDetails.seriesBooks[seriesName].length))
+                    const thumbnail = bookloreClient.getBookThumbnail(coverId, bookloreClient.accessToken)
+                    return <Snow.ImageButton
+                        title={seriesName}
+                        imageUrl={thumbnail}
                         onPress={navPush({
                             path: routes.seriesDetails,
                             params: {
-                                seriesName: item
+                                seriesName: seriesName
                             }
                         })} />
                 }} />

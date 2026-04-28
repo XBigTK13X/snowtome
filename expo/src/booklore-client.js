@@ -65,7 +65,7 @@ const by_alpha = (a, b) => {
 
 export class BookloreClient {
     constructor(details) {
-        this.cacheVersion = "1.3.3"
+        this.cacheVersion = "1.3.4-b"
         this.onApiError = details.onApiError
         this.clearApiError = details.clearApiError
         this.webApiUrl = details.webApiUrl
@@ -252,13 +252,17 @@ export class BookloreClient {
                     if (response) {
                         let seriesDedupe = {}
                         let librarySeries = []
+                        let seriesBooks = {}
                         let libraryBooks = response.filter((item) => {
                             if (item.libraryId === libraryId) {
                                 const series = item?.metadata?.seriesName
-                                if (series && !seriesDedupe.hasOwnProperty(series)) {
-                                    //TODO This is where we can grab a series cover
-                                    librarySeries.push(series)
-                                    seriesDedupe[series] = true
+                                if (series) {
+                                    if (!seriesDedupe.hasOwnProperty(series)) {
+                                        librarySeries.push(series)
+                                        seriesDedupe[series] = true
+                                        seriesBooks[series] = []
+                                    }
+                                    seriesBooks[series].push(item?.bookId ?? item?.id)
                                 }
                                 return true
                             }
@@ -267,7 +271,8 @@ export class BookloreClient {
                         librarySeries = librarySeries.sort(by_input)
                         return {
                             bookList: libraryBooks,
-                            seriesList: librarySeries
+                            seriesList: librarySeries,
+                            seriesBooks: seriesBooks,
                         }
                     }
                     return null
@@ -294,14 +299,23 @@ export class BookloreClient {
                 .then((response) => {
                     if (response) {
                         let dedupe = {}
+                        let seriesBooks = {}
                         for (let item of response) {
-                            if (item?.metadata?.seriesName) {
-                                dedupe[item?.metadata?.seriesName] = true
+                            let seriesName = item?.metadata?.seriesName
+                            if (seriesName) {
+                                if (!dedupe.hasOwnProperty(seriesName)) {
+                                    dedupe[seriesName] = true
+                                    seriesBooks[seriesName] = []
+                                }
+                                seriesBooks[seriesName].push(item?.bookId ?? item?.id)
                             }
                         }
-                        let result = Object.keys(dedupe)
+                        let seriesNames = Object.keys(dedupe)
                             .sort(by_input)
-                        return result
+                        return {
+                            seriesBooks,
+                            seriesNames
+                        }
                     }
                     return null
                 })
@@ -344,14 +358,23 @@ export class BookloreClient {
                 .then((response) => {
                     if (response) {
                         let dedupe = {}
+                        let authorBooks = {}
                         for (let item of response) {
                             if (item?.metadata?.authors?.length) {
-                                dedupe[item?.metadata?.authors.at(0)] = true
+                                let author = item?.metadata?.authors?.at(0)
+                                if (!dedupe.hasOwnProperty(author)) {
+                                    dedupe[author] = true
+                                    authorBooks[author] = []
+                                }
+                                authorBooks[author].push(item?.bookId ?? item?.id)
                             }
                         }
-                        let result = Object.keys(dedupe)
+                        let authorNames = Object.keys(dedupe)
                             .sort(by_alpha)
-                        return result
+                        return {
+                            authorNames: authorNames,
+                            authorBooks: authorBooks
+                        }
                     }
                     return null
                 })
