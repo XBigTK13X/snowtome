@@ -54,9 +54,14 @@ export default function SearchPage(props) {
                     {searchResults.map((searchResult, resultIndex) => {
                         if (searchResult.name === 'Book') {
                             return <Snow.Grid items={searchResult.items} renderItem={(item) => {
-                                const thumbnail = bookloreClient.getBookThumbnail(item.id)
+                                const thumbnail = bookloreClient.getBookThumbnail(item.bookId ?? item.id, bookloreClient.accessToken)
+                                let title = item?.metadata?.title ?? item?.title
+                                let seriesNumber = item?.metadata?.seriesNumber ?? item.seriesNumber
+                                if (seriesNumber) {
+                                    title = `#${seriesNumber} - ${title}`
+                                }
                                 return <Snow.ImageButton
-                                    title={item?.metadata?.title}
+                                    title={title}
                                     imageUrl={thumbnail}
                                     onPress={navPush({
                                         path: routes.bookDetails,

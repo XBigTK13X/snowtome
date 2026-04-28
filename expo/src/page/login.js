@@ -50,13 +50,6 @@ export default function LibraryListPage(props) {
             <Snow.Grid>
                 <Snow.TextButton focusStart title="Login" onPress={submitLogin} />
             </Snow.Grid>
-            <C.View>
-                <Snow.Text style={{
-                    position: 'absolute',
-                    right: 30,
-                    bottom: -250
-                }}>{`v${config.clientVersion} - built ${config.clientBuildDate}`}</Snow.Text>
-            </C.View>
         </Snow.View>
     )
 }

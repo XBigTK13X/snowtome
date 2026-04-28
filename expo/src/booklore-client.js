@@ -65,6 +65,7 @@ const by_alpha = (a, b) => {
 
 export class BookloreClient {
     constructor(details) {
+        this.cacheVersion = "1.3.3"
         this.onApiError = details.onApiError
         this.clearApiError = details.clearApiError
         this.webApiUrl = details.webApiUrl
@@ -183,9 +184,10 @@ export class BookloreClient {
     }
 
     readRemoteIfStale = (key, getter) => {
+        const cacheKey = `${key}-${this.cacheVersion}`
         return new Promise(resolve => {
             return this.heartbeat().then(() => {
-                cache.readApiCache(key, () => {
+                cache.readApiCache(cacheKey, () => {
                     return getter().then(result => {
                         if (result) {
                             return resolve(result)
