@@ -229,6 +229,7 @@ export default function BookDetailsPage(props) {
         routes
     } = C.useAppContext()
 
+    const finishedBookRef = C.React.useRef(false)
     const [pagesInfo, setPagesInfo] = C.React.useState(null)
     const pagesInfoRef = C.React.useRef(null)
     const [localUri, setLocalUri] = C.React.useState(null)
@@ -258,6 +259,9 @@ export default function BookDetailsPage(props) {
     }, [showCount])
 
     const nextPage = () => {
+        if (finishedBookRef.current) {
+            return
+        }
         const page = pageNumberRef.current
         const max = maxPageNumberRef.current
         const diff = showTwoPagesRef.current ? 2 : 1
@@ -266,11 +270,15 @@ export default function BookDetailsPage(props) {
             setPageNumber(page + diff)
         }
         else {
+            finishedBookRef.current = true
             navPop()
         }
     }
 
     const previousPage = () => {
+        if (finishedBookRef.current) {
+            return
+        }
         const page = pageNumberRef.current
         const diff = showTwoPagesRef.current ? 2 : 1
         if (page > 1) {
@@ -278,6 +286,7 @@ export default function BookDetailsPage(props) {
             setPageNumber(page - diff)
         }
         else {
+            finishedBookRef.current = true
             navPop()
         }
     }
@@ -393,6 +402,10 @@ export default function BookDetailsPage(props) {
             props: {
                 assignFocus: false,
                 onRequestClose: () => {
+                    if (finishedBookRef.current) {
+                        return
+                    }
+                    finishedBookRef.current = true
                     navPop()
                 }
             },
