@@ -229,7 +229,14 @@ export default function BookDetailsPage(props) {
         routes
     } = C.useAppContext()
 
-    const finishedBookRef = C.React.useRef(false)
+    const didNavPop = C.React.useRef(false)
+
+    const safeNavPop = C.React.useCallback(() => {
+        if (didNavPop.current) return
+        didNavPop.current = true
+        navPop()
+    }, [navPop])
+
     const [pagesInfo, setPagesInfo] = C.React.useState(null)
     const pagesInfoRef = C.React.useRef(null)
     const [localUri, setLocalUri] = C.React.useState(null)
@@ -259,35 +266,27 @@ export default function BookDetailsPage(props) {
     }, [showCount])
 
     const nextPage = () => {
-        if (finishedBookRef.current) {
-            return
-        }
+        if (didNavPop.current) return
         const page = pageNumberRef.current
         const max = maxPageNumberRef.current
         const diff = showTwoPagesRef.current ? 2 : 1
         if (page < max) {
             pageNumberRef.current += diff
             setPageNumber(page + diff)
-        }
-        else {
-            finishedBookRef.current = true
-            navPop()
+        } else {
+            safeNavPop()
         }
     }
 
     const previousPage = () => {
-        if (finishedBookRef.current) {
-            return
-        }
+        if (didNavPop.current) return
         const page = pageNumberRef.current
         const diff = showTwoPagesRef.current ? 2 : 1
         if (page > 1) {
             pageNumberRef.current -= diff
             setPageNumber(page - diff)
-        }
-        else {
-            finishedBookRef.current = true
-            navPop()
+        } else {
+            safeNavPop()
         }
     }
 
@@ -329,10 +328,17 @@ export default function BookDetailsPage(props) {
 
     let countDisplay = null
     if (showCount) {
+        let displayCurrentCount = pageNumber
+
+        if (pageNumber > 2) {
+            displayCurrentCount = (2 * pageNumber) - 2
+        }
+
+        let displayMax = (pagesInfo.length * 2) - 2
         countDisplay = (
             <C.View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                 <Snow.Text style={{ margin: 0, padding: 15, backgroundColor: 'black', color: 'white' }}>
-                    {`Page ${pageNumber} of ${pagesInfo.length}`}
+                    {`Page ${displayCurrentCount} of ${displayMax}`}
                 </Snow.Text>
             </C.View>
         )
@@ -401,13 +407,7 @@ export default function BookDetailsPage(props) {
         pushModal({
             props: {
                 assignFocus: false,
-                onRequestClose: () => {
-                    if (finishedBookRef.current) {
-                        return
-                    }
-                    finishedBookRef.current = true
-                    navPop()
-                }
+                onRequestClose: () => safeNavPop()
             },
             render: () => {
                 if (!pagesInfo) {
