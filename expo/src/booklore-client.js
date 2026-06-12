@@ -352,6 +352,33 @@ export class BookloreClient {
         })
     }
 
+    getShelfList = () => {
+        return this.readRemoteIfStale('shelf-list-2', () => {
+            return this.httpGet("/shelves")
+                .then((response) => {
+                    if (response) {
+                        response.sort(by_name);
+                        response = response.filter(x => { return x.name !== 'Favorites' && x.name !== 'Kobo' })
+                        return response
+                    }
+                    return null
+                })
+        })
+    }
+
+    getBookListByShelfId = (shelfId) => {
+        return this.readRemoteIfStale(`book-list-shelf-${shelfId}-3`, () => {
+            return this.httpGet(`/shelves/${shelfId}/books`)
+                .then((response) => {
+                    if (response) {
+                        response.sort(by_title)
+                        return response
+                    }
+                    return null
+                })
+        })
+    }
+
     getAuthorList = () => {
         return this.readRemoteIfStale(`author-list`, () => {
             return this.httpGet("/books")

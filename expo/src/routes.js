@@ -9,6 +9,7 @@ let routesInner = {
     bookRead: '/auth/wrap/book/read',
     categoryDetails: '/auth/wrap/category/details',
     downloadList: '/auth/wrap/download/list',
+    favoriteList: '/auth/wrap/favorite/list',
     landing: '/auth/landing',
     libraryDetails: '/auth/wrap/library',
     libraryList: '/auth/wrap/library/list',
@@ -16,6 +17,7 @@ let routesInner = {
     search: '/auth/wrap/search',
     seriesDetails: '/auth/wrap/series/details',
     seriesList: '/auth/wrap/series/list',
+    shelfDetails: '/auth/wrap/shelf/details',
     titleList: '/auth/wrap/title/list'
 }
 
