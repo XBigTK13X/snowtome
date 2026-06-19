@@ -34,9 +34,14 @@ const SnowApp = Snow.createSnowApp({
     appVersion: pkg.version
 })
 
-function PageWrapper() {
-    const { CurrentPage, currentRoute } = Snow.useSnowContext()
+function PageWrapper(props) {
+    const { CurrentPage, currentRoute, SnowStyle } = Snow.useSnowContext(props)
     const { refreshClient, routes, bookloreClient } = useAppContext()
+
+    let appWrapperStyle = { flex: 1, paddingBottom: 50 }
+    if (SnowStyle.isPortrait) {
+        appWrapperStyle.paddingTop = 50
+    }
 
     React.useEffect(() => {
         if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
@@ -45,10 +50,15 @@ function PageWrapper() {
         refreshClient()
     }, [currentRoute.routePath])
 
+    let interior = <AuthPageLoader />
     if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
-        return <CurrentPage />
+        interior = <CurrentPage />
     }
-    return <AuthPageLoader />
+    return (
+        <Snow.View style={appWrapperStyle}>
+            {interior}
+        </Snow.View>
+    )
 }
 
 export default function PageLoader() {
