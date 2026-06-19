@@ -21,7 +21,7 @@ export default function BookListPage(props) {
     return (
         <Snow.View {...props}>
             <Snow.Label center>{localParams.seriesName}</Snow.Label>
-            <Snow.Grid focusStart itemsPerRow={7} items={bookList} renderItem={(item) => {
+            <Snow.Grid focusStart items={bookList} renderItem={(item) => {
                 const thumbnail = apiClient.getBookThumbnail(item.id)
                 let title = item.name
                 const dashIndex = title.indexOf(' - ')

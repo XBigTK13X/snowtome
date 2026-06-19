@@ -40,11 +40,11 @@ export default function LibraryListPage(props) {
         <Snow.View {...props}>
             <Snow.Header>Booklore</Snow.Header>
             <Snow.Grid itemsPerRow={2}>
-                <Snow.Label>Server URL</Snow.Label>
+                <Snow.Label style={{ width: 250 }}>Server URL</Snow.Label>
                 <Snow.Input onValueChange={changeForm('bookloreUrl')} value={form.bookloreUrl} />
-                <Snow.Label>Username</Snow.Label>
+                <Snow.Label style={{ width: 250 }}>Username</Snow.Label>
                 <Snow.Input onValueChange={changeForm('bookloreUsername')} value={form.bookloreUsername} />
-                <Snow.Label>Password</Snow.Label>
+                <Snow.Label style={{ width: 250 }}>Password</Snow.Label>
                 <Snow.Input onValueChange={changeForm('booklorePassword')} value={form.booklorePassword} />
             </Snow.Grid>
             <Snow.Grid>

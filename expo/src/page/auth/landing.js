@@ -17,7 +17,7 @@ export default function LibraryListPage(props) {
 
     return (
         <Snow.View {...props}>
-            <Snow.Grid focusStart itemsPerRow={3}>
+            <Snow.Grid focusStart>
                 {readerDebug}
                 {C.isTV ? null : <Snow.TextButton title='Downloads' onPress={navPush({ path: routes.downloadList })} />}
                 {C.isTV ? null : <Snow.TextButton title='Library' onPress={navPush({ path: routes.libraryList })} />}

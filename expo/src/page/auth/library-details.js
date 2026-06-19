@@ -33,7 +33,7 @@ export default function LibraryDetailsPage(props) {
             <Snow.View {...props}>
                 {viewPicker}
                 <Snow.Label center>Series [{libraryDetails.seriesList.length}]</Snow.Label>
-                <Snow.Grid focusKey={"series"} focusStart itemsPerRow={4} items={libraryDetails.seriesList} renderItem={(seriesName) => {
+                <Snow.Grid focusKey={"series"} focusStart items={libraryDetails.seriesList} renderItem={(seriesName) => {
                     let coverId = libraryDetails.seriesBooks[seriesName].at(Math.floor(coverSeed * libraryDetails.seriesBooks[seriesName].length))
                     const thumbnail = bookloreClient.getBookThumbnail(coverId, bookloreClient.accessToken)
                     return <Snow.ImageButton

@@ -7,7 +7,7 @@ export default function BookList(props) {
     return (
         <Snow.View {...props}>
             <Snow.Label center>{props?.getHeader?.(currentRoute?.routeParams) ?? 'Books'} [{props.bookList?.length}]</Snow.Label>
-            <Snow.Grid focusStart={props.focusStart} key={clientVersion} itemsPerRow={5} items={props.bookList} renderItem={(item) => {
+            <Snow.Grid focusStart={props.focusStart} key={clientVersion} items={props.bookList} renderItem={(item) => {
                 const thumbnail = bookloreClient.getBookThumbnail(item.bookId ?? item.id, bookloreClient.accessToken)
                 let title = item?.metadata?.title ?? item?.title
                 let seriesNumber = item?.metadata?.seriesNumber ?? item.seriesNumber

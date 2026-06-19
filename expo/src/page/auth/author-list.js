@@ -25,7 +25,7 @@ export default function AuthorListPage(props) {
     return (
         <Snow.View {...props}>
             <Snow.Label center>Author [{authorList?.length}]</Snow.Label>
-            <Snow.Grid focusStart itemsPerRow={4} items={authorList} renderItem={(authorName) => {
+            <Snow.Grid focusStart items={authorList} renderItem={(authorName) => {
                 let coverId = authorBooks[authorName].at(Math.floor(coverSeed * authorBooks[authorName].length))
                 const thumbnail = bookloreClient.getBookThumbnail(coverId, bookloreClient.accessToken)
                 return <Snow.ImageButton

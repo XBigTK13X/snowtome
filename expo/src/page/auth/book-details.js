@@ -113,7 +113,7 @@ export default function BookDetailsPage(props) {
 
     return (
         <Snow.View {...props}>
-            <Snow.Grid focusStart itemsPerRow={4}>
+            <Snow.Grid focusStart >
                 {localUri
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.TextButton
@@ -142,12 +142,8 @@ export default function BookDetailsPage(props) {
                     }
                 })} /> : null}
             </Snow.Grid>
-            <Snow.Grid itemsPerRow={4}>
-                <Snow.View>
-                    <Snow.Label center>{bookInfo.metadata.title}</Snow.Label>
-                    <Snow.Text center>by {bookInfo.metadata.authors?.at(0) ?? 'Unknown'}</Snow.Text>
-                </Snow.View>
-            </Snow.Grid>
+            <Snow.Label center>{bookInfo.metadata.title}</Snow.Label>
+            <Snow.Text center>by {bookInfo.metadata.authors?.at(0) ?? 'Unknown'}</Snow.Text>
             <Snow.Text center>{localUri ? `[${prettyPath}]` : 'This book is not yet downloaded'}</Snow.Text>
 
             {localUri && <Snow.Grid><Snow.TextButton title="Delete Local" onPress={deleteDownload} /></Snow.Grid>}
