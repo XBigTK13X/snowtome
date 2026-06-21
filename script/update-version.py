@@ -71,6 +71,7 @@ update_info(
     version_replacement=f'        versionName "{build_version}"\n',
 )
 
+print(f'Updating {VERSIONS_JSON_PATH}')
 versions_content = None
 with open(VERSIONS_JSON_PATH, 'r', encoding='utf-8') as read_handle:
     versions_content = json.load(read_handle)

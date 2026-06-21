@@ -2,6 +2,9 @@ import Snow from 'expo-snowui'
 import C from '../../common'
 import * as IntentLauncher from 'expo-intent-launcher';
 
+const FLAG_GRANT_READ_URI_PERMISSION = 0x00000001
+const FLAG_ACTIVITY_NEW_TASK = 0x10000000
+
 export default function BookDetailsPage(props) {
     const {
         bookloreClient,
@@ -53,7 +56,7 @@ export default function BookDetailsPage(props) {
     const openBook = (uri) => {
         IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
             data: uri,
-            flags: 1,
+            flags: FLAG_GRANT_READ_URI_PERMISSION | FLAG_ACTIVITY_NEW_TASK,
             type: fileMimeRef.current
         })
     }

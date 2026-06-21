@@ -14,11 +14,11 @@ export default function BookListPage(props) {
         }
     }, [bookloreClient])
 
-    if (!bookList && bookList !== null) {
+    if (!bookList?.length && bookList?.length !== 0) {
         return <Snow.Label center>Loading books...</Snow.Label>
     }
 
-    if (!bookList?.length) {
+    if (bookList?.length === 0) {
         return <Snow.Label center>No books found</Snow.Label>
     }
 
