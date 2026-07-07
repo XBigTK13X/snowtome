@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import Snow from 'expo-snowui'
 
 import { config } from './settings'
@@ -11,14 +11,14 @@ const AppContext = React.createContext({
     routes: null,
     booklore: null,
     onLogin: null
-});
+})
 
 export function useAppContext() {
-    const value = React.useContext(AppContext);
+    const value = React.useContext(AppContext)
     if (!value) {
-        throw new Error('appContext must be wrapped in a <AppContextProvider />');
+        throw new Error('appContext must be wrapped in a <AppContextProvider />')
     }
-    return value;
+    return value
 }
 
 export function AppContextProvider(props) {
@@ -42,6 +42,7 @@ export function AppContextProvider(props) {
 
     const [booklore, setBooklore] = React.useState(null)
     const [authed, setAuthed] = React.useState(false)
+    const [initializing, setInitializing] = React.useState(true)
     const [downloadDirectory, setDownloadDirectory] = React.useState(null)
     const [clientVersion, setClientVersion] = React.useState(0)
 
@@ -79,7 +80,7 @@ export function AppContextProvider(props) {
     const refreshClient = () => {
         return new Promise((resolve) => {
             booklore.heartbeat().then((freshClient) => {
-                setClientVersion(v => v + 1)
+                setClientVersion(vv => vv + 1)
                 resolve(freshClient)
             })
         })
@@ -87,6 +88,12 @@ export function AppContextProvider(props) {
 
     React.useEffect(() => {
         let bookloreAuth = Snow.loadData('bookloreAuth')
+        const savedDir = Snow.loadData('downloadDirectoryUri')
+
+        if (savedDir) {
+            setDownloadDirectory(savedDir)
+        }
+
         if (bookloreAuth) {
             bookloreAuth = JSON.parse(bookloreAuth)
             const client = new BookloreClient({
@@ -96,12 +103,20 @@ export function AppContextProvider(props) {
                 accessToken: bookloreAuth.accessToken,
                 refreshToken: bookloreAuth.refreshToken
             })
-            setBooklore(client)
-            setAuthed(true)
-        }
-        const savedDir = Snow.loadData('downloadDirectoryUri')
-        if (savedDir) {
-            setDownloadDirectory(savedDir)
+
+            client.heartbeat()
+                .then((freshClient) => {
+                    setBooklore(freshClient)
+                    setAuthed(true)
+                })
+                .catch(() => {
+                    onLogout()
+                })
+                .finally(() => {
+                    setInitializing(false)
+                })
+        } else {
+            setInitializing(false)
         }
     }, [])
 
@@ -137,6 +152,7 @@ export function AppContextProvider(props) {
         routes,
         bookloreClient: booklore,
         authed,
+        initializing,
         onLogin,
         onLogout,
         refreshClient,

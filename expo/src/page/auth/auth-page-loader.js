@@ -3,18 +3,26 @@ import Snow from 'expo-snowui'
 import { C, useAppContext } from 'snowtome'
 
 export default function AuthPageLoader(props) {
-    const { bookloreClient, authed, routes } = useAppContext();
+    const { bookloreClient, authed, initializing, routes } = useAppContext()
     const { CurrentPage, currentRoute, navPush, navPop } = Snow.useSnowContext()
     const [hasAuth, setHasAuth] = React.useState(false)
 
     React.useEffect(() => {
-        if (!hasAuth) {
+        if (!initializing && !hasAuth) {
             if (currentRoute.routePath.includes('/auth/') && !authed) {
                 setHasAuth(true)
                 navPush({ path: routes.login, func: false })
             }
         }
-    }, [hasAuth, authed, currentRoute])
+    }, [hasAuth, authed, currentRoute, initializing])
+
+    if (initializing) {
+        return (
+            <Snow.View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Snow.Text>Going to the library...</Snow.Text>
+            </Snow.View>
+        )
+    }
 
     if (!bookloreClient) {
         return null
@@ -32,7 +40,6 @@ export default function AuthPageLoader(props) {
                 </Snow.Grid>
                 <Snow.Break />
             </Snow.View>
-
         )
     }
 

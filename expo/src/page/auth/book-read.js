@@ -356,6 +356,7 @@ export default function BookDetailsPage(props) {
                     }
                     return (
                         <Snow.TextButton title={pageDisplay} onPress={() => {
+                            pageNumberRef.current = pageInfo?.pageNumber
                             setPageNumber(pageInfo?.pageNumber)
                             setShowPagePicker(false)
                         }} />

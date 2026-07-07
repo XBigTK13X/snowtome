@@ -13,12 +13,12 @@ export default function LibraryListPage(props) {
     }, [])
 
     if (!libraryList) {
-        return <Snow.Label center>Loading favorites for {bookloreClient.username}...</Snow.Label>
+        return <Snow.Label center>Loading shelves for {bookloreClient.username}...</Snow.Label>
     }
 
     return (
         <Snow.View {...props}>
-            <Snow.Label center>Favorites [{libraryList?.length}]</Snow.Label>
+            <Snow.Label center>Shelves [{libraryList?.length}]</Snow.Label>
             <Snow.Grid focusStart items={libraryList} renderItem={(item) => {
                 return <Snow.TextButton
                     title={item.name}
