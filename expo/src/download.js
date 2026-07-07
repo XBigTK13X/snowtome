@@ -28,7 +28,12 @@ const ensureSubdirectory = async (baseDirUri, subPath) => {
     let currentUri = baseDirUri
     for (const segment of segments) {
         const items = await SAF.readDirectoryAsync(currentUri)
-        const existing = items.find((uri) => uri.endsWith('%2F' + encodeURIComponent(segment)) || uri.endsWith('/' + segment))
+
+        const existing = items.find((uri) => {
+            const decodedUri = decodeURIComponent(uri)
+            return decodedUri.endsWith('/' + segment) || decodedUri.endsWith(':' + segment)
+        })
+
         if (existing) {
             currentUri = existing
         } else {

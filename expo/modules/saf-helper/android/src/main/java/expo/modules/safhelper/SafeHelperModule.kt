@@ -25,7 +25,7 @@ class SafHelperModule : Module() {
                 }
 
                 val totalBytes = connection.contentLengthLong
-                val dest = context.contentResolver.openOutputStream(Uri.parse(destContentUri))
+                val dest = context.contentResolver.openOutputStream(Uri.parse(destContentUri), "rw")
                     ?: throw Exception("Could not open output stream for $destContentUri")
 
                 var bytesWritten = 0L
