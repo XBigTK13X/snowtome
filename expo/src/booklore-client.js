@@ -63,6 +63,16 @@ const by_alpha = (a, b) => {
     return 0
 }
 
+const by_date = (first_item, second_item) => {
+    if (first_item.addedOn > second_item.addedOn) {
+        return -1
+    }
+    if (first_item.addedOn < second_item.addedOn) {
+        return 1
+    }
+    return 0
+}
+
 export class BookloreClient {
     constructor(details) {
         this.cacheVersion = "1.3.4-b"
@@ -416,6 +426,19 @@ export class BookloreClient {
                         let result = response.filter((item) => {
                             return item?.metadata?.authors?.at(0) === authorName
                         }).sort(by_title)
+                        return result
+                    }
+                    return null
+                })
+        })
+    }
+
+    getBookListByRecentlyAdded = () => {
+        return this.readRemoteIfStale(`recently-added`, () => {
+            return this.httpGet("/books")
+                .then((response) => {
+                    if (response) {
+                        let result = response.sort(by_date).slice(0, 100)
                         return result
                     }
                     return null

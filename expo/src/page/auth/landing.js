@@ -26,6 +26,7 @@ export default function LibraryListPage(props) {
                 {C.isTV ? null : <Snow.TextButton title='Author' onPress={navPush({ path: routes.authorList })} />}
                 <Snow.TextButton title='Title' onPress={navPush({ path: routes.titleList })} />
                 <Snow.TextButton title='Search' onPress={navPush({ path: routes.search })} />
+                <Snow.TextButton title='New Books' onPress={navPush({ path: routes.recentlyAdded })} />
                 {C.isTV ? null : <Snow.TextButton title='Options' onPress={navPush({ path: routes.options })} />}
 
             </Snow.Grid>

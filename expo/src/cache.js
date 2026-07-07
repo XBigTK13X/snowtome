@@ -63,9 +63,8 @@ export const clearApiCache = async () => {
                 cacheDir.delete()
             }
             return resolve()
-        } catch (error) {
-            console.log({ error })
-            throw error
+        } catch (err) {
+            throw err
         }
     })
 }

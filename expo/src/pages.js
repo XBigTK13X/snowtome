@@ -13,6 +13,7 @@ import LandingPage from './page/auth/landing'
 import LibraryDetailsPage from './page/auth/library-details'
 import LibraryListPage from './page/auth/library-list'
 import OptionsPage from './page/auth/options'
+import RecentlyAddedPage from './page/auth/recently-added'
 import SearchPage from './page/auth/search'
 import SeriesDetailsPage from './page/auth/series-details'
 import SeriesListPage from './page/auth/series-list'
@@ -34,6 +35,7 @@ export var pages = {
     [routes.libraryDetails]: LibraryDetailsPage,
     [routes.libraryList]: LibraryListPage,
     [routes.options]: OptionsPage,
+    [routes.recentlyAdded]: RecentlyAddedPage,
     [routes.search]: SearchPage,
     [routes.seriesDetails]: SeriesDetailsPage,
     [routes.seriesList]: SeriesListPage,

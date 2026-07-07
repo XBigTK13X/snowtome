@@ -14,6 +14,7 @@ let routesInner = {
     libraryDetails: '/auth/wrap/library',
     libraryList: '/auth/wrap/library/list',
     options: '/auth/wrap/options',
+    recentlyAdded: '/auth/wrap/recently-added',
     search: '/auth/wrap/search',
     seriesDetails: '/auth/wrap/series/details',
     seriesList: '/auth/wrap/series/list',
