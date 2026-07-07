@@ -11,10 +11,18 @@ export default function OptionsPage(props) {
         setStatus(`Deleted ${count} books`)
     }
 
+    const clearCache = async () => {
+        setStatus("Clearing cache")
+        C.cache.clearApiCache().then(() => {
+            setStatus("Cache cleared")
+        })
+    }
+
     return (
         <Snow.View {...props}>
             <Snow.Grid focusStart>
                 <Snow.TextButton title="Clear Downloads" onPress={clearDownloads} />
+                <Snow.TextButton title="Clear Cache" onPress={clearCache} />
             </Snow.Grid>
             <Snow.Label center>{status}</Snow.Label>
         </Snow.View>

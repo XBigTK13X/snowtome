@@ -1,4 +1,4 @@
-import pkg from "../../package.json";
+import pkg from "../../package.json"
 import React from 'react'
 import { Platform } from 'react-native'
 import Snow from 'expo-snowui'
@@ -35,20 +35,45 @@ const SnowApp = Snow.createSnowApp({
 })
 
 function PageWrapper(props) {
-    const { CurrentPage, currentRoute, SnowStyle } = Snow.useSnowContext(props)
-    const { refreshClient, routes, bookloreClient } = useAppContext()
+    const { CurrentPage, currentRoute, SnowStyle, navPush } = Snow.useSnowContext(props)
+    const { refreshClient, routes, bookloreClient, authed, initializing } = useAppContext()
 
     let appWrapperStyle = { flex: 1, paddingBottom: 50 }
     if (SnowStyle.isPortrait) {
         appWrapperStyle.paddingTop = 50
     }
 
+    // Handles normal heartbeat routing updates
     React.useEffect(() => {
-        if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
+        if (initializing || currentRoute.routePath === routes.login || currentRoute.routePath === '/') {
             return
         }
         refreshClient()
-    }, [currentRoute.routePath])
+    }, [currentRoute.routePath, initializing])
+
+    // Route straight to landing if authed when initialization finishes to prevent login screen flashing
+    React.useEffect(() => {
+        if (!initializing && authed && (currentRoute.routePath === routes.login || currentRoute.routePath === '/')) {
+            navPush({ path: routes.landing, func: false })
+        }
+    }, [initializing, authed, currentRoute.routePath])
+
+    if (initializing) {
+        return (
+            <Snow.View style={[appWrapperStyle, { justifyContent: 'center', alignItems: 'center' }]}>
+                <Snow.Header center>Going to the library...</Snow.Header>
+            </Snow.View>
+        )
+    }
+
+    // Suppress showing login screen content if we are authenticated and waiting for the redirect effect to fire
+    if (authed && (currentRoute.routePath === routes.login || currentRoute.routePath === '/')) {
+        return (
+            <Snow.View style={[appWrapperStyle, { justifyContent: 'center', alignItems: 'center' }]}>
+                <Snow.Header center>Going to the library...</Snow.Header>
+            </Snow.View>
+        )
+    }
 
     let interior = <AuthPageLoader />
     if (currentRoute.routePath === routes.login || currentRoute.routePath === '/') {

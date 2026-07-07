@@ -48,6 +48,29 @@ export const readApiCache = async (key, apiCall) => {
     })
 }
 
+export const clearApiCache = async () => {
+    return new Promise(async (resolve) => {
+        if (Platform.OS === 'web') {
+            return
+        }
+        try {
+            const FileSystem = await import('expo-file-system')
+            const FileSystemLegacy = await import('expo-file-system/legacy')
+            const CACHE_DIR_PATH = `${FileSystemLegacy.cacheDirectory}api_cache`
+            const cacheDir = new FileSystem.Directory(CACHE_DIR_PATH)
+
+            if (cacheDir.exists) {
+                cacheDir.delete()
+            }
+            return resolve()
+        } catch (error) {
+            console.log({ error })
+            throw error
+        }
+    })
+}
+
 export default {
-    readApiCache
+    readApiCache,
+    clearApiCache
 }

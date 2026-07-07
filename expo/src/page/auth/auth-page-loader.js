@@ -19,7 +19,7 @@ export default function AuthPageLoader(props) {
     if (initializing) {
         return (
             <Snow.View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Snow.Text>Going to the library...</Snow.Text>
+                <Snow.Header center>Going to the library...</Snow.Header>
             </Snow.View>
         )
     }
