@@ -27,6 +27,9 @@
       "expo-secure-store"
     ],
     "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2cdb72"
+      },
       "edgeToEdgeEnabled": true,
       "package": "com.simplepathstudios.snowtome",
       "backgroundColor": "#000000",
@@ -37,6 +40,7 @@
     },
     "splash": {
       "image": "./assets/icon/splash.png",
+      "resizeMode": "contain",
       "backgroundColor": "#2cdb72"
     },
     "newArchEnabled": true,
