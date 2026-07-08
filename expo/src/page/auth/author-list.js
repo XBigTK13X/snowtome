@@ -29,6 +29,7 @@ export default function AuthorListPage(props) {
                 let coverId = authorBooks[authorName].at(Math.floor(coverSeed * authorBooks[authorName].length))
                 const thumbnail = bookloreClient.getBookThumbnail(coverId, bookloreClient.accessToken)
                 return <Snow.ImageButton
+                    overlayTitle
                     title={authorName}
                     imageUrl={thumbnail}
                     onPress={navPush({

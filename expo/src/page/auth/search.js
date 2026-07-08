@@ -61,6 +61,7 @@ export default function SearchPage(props) {
                                     title = `#${seriesNumber} - ${title}`
                                 }
                                 return <Snow.ImageButton
+                                    overlayTitle
                                     title={title}
                                     imageUrl={thumbnail}
                                     onPress={navPush({

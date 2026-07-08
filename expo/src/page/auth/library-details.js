@@ -37,6 +37,7 @@ export default function LibraryDetailsPage(props) {
                     let coverId = libraryDetails.seriesBooks[seriesName].at(Math.floor(coverSeed * libraryDetails.seriesBooks[seriesName].length))
                     const thumbnail = bookloreClient.getBookThumbnail(coverId, bookloreClient.accessToken)
                     return <Snow.ImageButton
+                        overlayTitle
                         title={seriesName}
                         imageUrl={thumbnail}
                         onPress={navPush({

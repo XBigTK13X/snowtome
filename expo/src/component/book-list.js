@@ -15,6 +15,7 @@ export default function BookList(props) {
                     title = `#${seriesNumber} - ${title}`
                 }
                 return <Snow.ImageButton
+                    overlayTitle
                     title={title}
                     imageUrl={thumbnail}
                     onPress={navPush({

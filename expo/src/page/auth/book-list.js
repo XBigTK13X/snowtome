@@ -29,6 +29,7 @@ export default function BookListPage(props) {
                     title = item.name.substring(0, dashIndex)
                 }
                 return <Snow.ImageButton
+                    overlayTitle
                     title={title}
                     imageSource={thumbnail}
                     onPress={routes.func(routes.bookDetails, { bookId: item.id })} />
