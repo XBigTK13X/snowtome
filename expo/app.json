@@ -30,7 +30,6 @@
       "adaptiveIcon": {
         "backgroundColor": "#2cdb72"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.simplepathstudios.snowtome",
       "backgroundColor": "#000000",
       "versionCode": 1

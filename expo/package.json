@@ -1,6 +1,6 @@
 {
   "name": "snowtome",
-  "version": "1.4.5",
+    "version": "1.4.6",
   "scripts": {
     "start": "EXPO_TV=1 expo start",
     "android": "EXPO_TV=1 expo run:android",
@@ -9,33 +9,33 @@
     "prebuild": "EXPO_TV=1 expo prebuild --clean"
   },
   "dependencies": {
-    "@expo/metro-runtime": "6.1.2",
-    "@sentry/react-native": "7.2.0",
-    "axios": "1.12.2",
-    "expo": "54.0.33",
-    "expo-build-properties": "1.0.10",
-    "expo-constants": "^18.0.13",
-    "expo-file-system": "^19.0.21",
-    "expo-intent-launcher": "^55.0.8",
-    "expo-linking": "8.0.11",
-    "expo-secure-store": "^15.0.7",
-    "expo-sharing": "^14.0.8",
-    "expo-snowui": "^1.7.84",
-    "expo-splash-screen": "31.0.12",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-native": "npm:react-native-tvos@0.81.5-2",
-    "react-native-safe-area-context": "5.6.1",
-    "react-native-screens": "4.16.0",
-    "react-native-web": "0.21.1",
+    "@expo/metro-runtime": "57.0.8",
+    "@sentry/react-native": "7.11.0",
+    "axios": "1.19.0",
+    "expo": "57.0.11",
+    "expo-build-properties": "57.0.9",
+    "expo-constants": "^57.0.9",
+    "expo-file-system": "^57.0.2",
+    "expo-intent-launcher": "^57.0.1",
+    "expo-linking": "57.0.5",
+    "expo-secure-store": "^57.0.1",
+    "expo-sharing": "^57.0.8",
+    "expo-snowui": "^1.8.1",
+    "expo-splash-screen": "57.0.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-native": "npm:react-native-tvos@0.86.2-0",
+    "react-native-safe-area-context": "5.7.0",
+    "react-native-screens": "4.26.2",
+    "react-native-web": "0.21.2",
     "saf-helper": "file:./modules/saf-helper",
-    "use-debounce": "10.0.6"
+    "use-debounce": "10.1.1"
   },
   "devDependencies": {
-    "@babel/core": "7.28.4",
-    "@react-native-tvos/config-tv": "0.1.4",
-    "@types/react": "19.1.10",
-    "typescript": "5.9.2"
+    "@babel/core": "7.29.0",
+    "@react-native-tvos/config-tv": "0.1.6",
+    "@types/react": "19.2.18",
+    "typescript": "6.0.3"
   },
   "expo": {
     "install": {

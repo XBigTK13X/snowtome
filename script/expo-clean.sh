@@ -5,13 +5,10 @@ source script/variables.sh
 cd expo
 rm -rf .expo
 rm -rf node_modules
-rm yarn.lock || true
-rm package-lock.json || true
+rm -rf android
+rm -rf ios
+rm -f yarn.lock
 
 npx yarn install
 
-cd android
-rm -rf build/
-./gradlew clean
-
-cd ../..
+cd ..
