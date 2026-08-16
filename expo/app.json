@@ -1,6 +1,24 @@
 {
   "expo": {
+    "name": "snowtome",
+    "slug": "snowtome",
+    "scheme": "com.simplepathstudios.snowtome",
+    "newArchEnabled": true,
+    "icon": "./assets/icon/appicon.png",
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#2cdb72",
+          "android": {
+            "image": "./assets/icon/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#2cdb72"
+          }
+        }
+      ],
       [
         "@react-native-tvos/config-tv",
         {
@@ -28,6 +46,7 @@
     ],
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/icon/appicon.png",
         "backgroundColor": "#2cdb72"
       },
       "package": "com.simplepathstudios.snowtome",
@@ -36,16 +55,6 @@
     },
     "ios": {
       "bundleIdentifier": "com.simplepathstudios.snowtome"
-    },
-    "splash": {
-      "image": "./assets/icon/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#2cdb72"
-    },
-    "newArchEnabled": true,
-    "name": "snowtome",
-    "slug": "snowtome",
-    "scheme": "com.simplepathstudios.snowtome",
-    "icon": "./assets/icon/appicon.png"
+    }
   }
 }
