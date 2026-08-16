@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 export NODE_ENV="production"
 
 echo "=-=- Build the apks -=-="
@@ -12,3 +14,5 @@ echo "=-=- Deploy to the TVs -=-="
 ~/script/remote-adb.py All deploy_snowtome
 
 unset NODE_ENV
+
+set +e
