@@ -30,13 +30,11 @@ export default function LibraryListPage(props) {
                 {C.isTV ? null : <Snow.TextButton title='Options' onPress={navPush({ path: routes.options })} />}
 
             </Snow.Grid>
-            <C.View>
-                <Snow.Text style={{
-                    position: 'absolute',
-                    right: 30,
-                    bottom: -250
-                }}>{`[built ${config.clientBuildDate}] [snowtome v${config.clientVersion}] [snowui v${snowuiPackageInfo.version}]`}</Snow.Text>
-            </C.View>
+            <Snow.Version
+                appName="snowtome"
+                appVersion={config.clientVersion}
+                buildDate={config.clientBuildDate}
+            />
         </Snow.View>
     )
 }
