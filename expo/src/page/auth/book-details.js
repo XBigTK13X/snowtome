@@ -1,9 +1,5 @@
 import Snow from 'expo-snowui'
 import C from '../../common'
-import * as IntentLauncher from 'expo-intent-launcher';
-
-const FLAG_GRANT_READ_URI_PERMISSION = 0x00000001
-const FLAG_ACTIVITY_NEW_TASK = 0x10000000
 
 export default function BookDetailsPage(props) {
     const {
@@ -21,6 +17,7 @@ export default function BookDetailsPage(props) {
     const fileKindRef = C.React.useRef(null)
     const [fileMime, setFileMime] = C.React.useState(null)
     const fileMimeRef = C.React.useRef(null)
+    const [downloadProgress, setDownloadProgress] = C.React.useState(null)
 
     C.React.useEffect(() => {
         bookloreClient.getBookDetails(currentRoute.routeParams.bookId).then((response) => {
@@ -53,15 +50,13 @@ export default function BookDetailsPage(props) {
         bookInfoRef.current = bookInfo
     }, [bookInfo])
 
-    const openBook = (uri) => {
-        IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-            data: uri,
-            flags: FLAG_GRANT_READ_URI_PERMISSION | FLAG_ACTIVITY_NEW_TASK,
-            type: fileMimeRef.current
-        })
+    const openBook = async (uri) => {
+        try {
+            await Snow.Download.openFile(uri, fileMimeRef.current)
+        } catch (error) {
+            console.error("Failed to open file:", error)
+        }
     }
-
-    const [downloadProgress, setDownloadProgress] = C.React.useState(null)
 
     const downloadBook = () => {
         bookloreClient.getBookContentUrl(currentRoute.routeParams.bookId)
@@ -73,6 +68,7 @@ export default function BookDetailsPage(props) {
                     token: response.authToken,
                     downloadDirectory,
                     updateDownloadDirectory,
+                    mimeType: fileMimeRef.current,
                     onProgress: setDownloadProgress,
                     onComplete: (uri) => {
                         setDownloadProgress(null)
@@ -88,7 +84,7 @@ export default function BookDetailsPage(props) {
     }
 
     const toggleRead = () => {
-
+        // Implementation for read toggle
     }
 
     if (!bookInfo) {
@@ -98,7 +94,7 @@ export default function BookDetailsPage(props) {
     let prettyPath = null
     if (localUri) {
         prettyPath = decodeURIComponent(localUri)
-            .replace(decodeURIComponent(downloadDirectory), 'SDCARD/')
+            .replace(decodeURIComponent(downloadDirectory || ''), 'SDCARD/')
             .replace(/\/document\/[^/]+:/, '')
     }
 
@@ -112,7 +108,9 @@ export default function BookDetailsPage(props) {
         }
     }
 
-    const downloadTitle = downloadProgress ? `Downloading ${Math.round(downloadProgress * 100)}%` : 'Download'
+    const downloadTitle = downloadProgress !== null
+        ? `Downloading ${Math.round(downloadProgress * 100)}%`
+        : 'Download'
 
     return (
         <Snow.View {...props}>
@@ -121,16 +119,18 @@ export default function BookDetailsPage(props) {
                     ? <Snow.TextButton title="Open" onPress={() => openBook(localUri)} />
                     : <Snow.TextButton
                         title={downloadTitle}
-                        disabled={!!downloadProgress}
+                        disabled={downloadProgress !== null}
                         onPress={downloadBook}
                     />
                 }
-                {fileKindRef.current === 'cbz' || fileKindRef.current === 'cbr' ? <Snow.TextButton title="Read Online" onPress={navPush({
-                    path: routes.bookRead,
-                    params: {
-                        bookId: currentRoute.routeParams.bookId
-                    }
-                })} /> : null}
+                {fileKindRef.current === 'cbz' || fileKindRef.current === 'cbr' ? (
+                    <Snow.TextButton title="Read Online" onPress={navPush({
+                        path: routes.bookRead,
+                        params: {
+                            bookId: currentRoute.routeParams.bookId
+                        }
+                    })} />
+                ) : null}
                 <Snow.TextButton title="Mark Read" onPress={toggleRead} />
                 {author ? <Snow.TextButton title={author} onPress={navPush({
                     path: routes.authorDetails,

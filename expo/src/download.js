@@ -1,9 +1,6 @@
 import { Platform } from 'react-native'
-import { File, Directory, Paths } from 'expo-file-system'
-import * as FileSystem from 'expo-file-system/legacy'
-import { downloadToSaf } from '../modules/saf-helper'
-
-const { StorageAccessFramework: SAF } = FileSystem
+import { File, Paths } from 'expo-file-system'
+import Snow from 'expo-snowui'
 
 const LEDGER_KEY = 'download_ledger'
 
@@ -22,31 +19,11 @@ const writeLedger = async (ledger) => {
     ledgerFile.write(JSON.stringify(ledger))
 }
 
-const ensureSubdirectory = async (baseDirUri, subPath) => {
-    if (!subPath) return baseDirUri
-    const segments = subPath.split('/').filter((s) => s.length > 0)
-    let currentUri = baseDirUri
-    for (const segment of segments) {
-        const items = await SAF.readDirectoryAsync(currentUri)
-
-        const existing = items.find((uri) => {
-            const decodedUri = decodeURIComponent(uri)
-            return decodedUri.endsWith('/' + segment) || decodedUri.endsWith(':' + segment)
-        })
-
-        if (existing) {
-            currentUri = existing
-        } else {
-            currentUri = await SAF.makeDirectoryAsync(currentUri, segment)
-        }
-    }
-    return currentUri
-}
-
 const getDestination = (bookInfo) => {
     const pathParts = bookInfo.primaryFile.filePath.split('.')
     let fileName = ''
     let subPath = `${bookInfo.libraryName}`
+
     if (bookInfo.metadata?.seriesName) {
         subPath = `${bookInfo.libraryName}/${bookInfo.metadata.seriesName}`
         if (bookInfo.metadata?.seriesNumber) {
@@ -59,9 +36,11 @@ const getDestination = (bookInfo) => {
             subPath += `/${bookInfo.metadata.authors.at(0)}`
         }
     }
+
     fileName += `${bookInfo.metadata?.title} - `
     fileName += `${bookInfo.metadata?.authors?.at(0)}`
     fileName += `.${pathParts.at(-1)}`
+
     return { fileName, subPath }
 }
 
@@ -84,42 +63,25 @@ const makeLedgerEntry = (bookInfo, safUri) => ({
 const getLocalUri = async (bookInfo, downloadDirectory) => {
     const ledger = await readLedger()
     if (ledger[bookInfo.id]) return ledger[bookInfo.id].safUri
-
-    if (!downloadDirectory) return null
-
-    const { fileName, subPath } = getDestination(bookInfo)
-    const normalizedFileName = fileName.replace(/:/g, '_')
-
-    try {
-        const targetDirUri = await ensureSubdirectory(downloadDirectory, subPath)
-        const files = await SAF.readDirectoryAsync(targetDirUri)
-        const found = files.find((uri) => decodeURIComponent(uri).endsWith(normalizedFileName))
-        if (found) {
-            const ledger = await readLedger()
-            await writeLedger({ ...ledger, [bookInfo.id]: makeLedgerEntry(bookInfo, found) })
-            return found
-        }
-    } catch { }
-
-    return null
+    return null // Note: Manual SAF directory scanning omitted; reliant on ledger
 }
 
 const downloadFile = async ({
     bookInfo,
     remoteUrl,
-    token,
+    token, // Note: Native module doesn't take headers; backend must support query param auth
     downloadDirectory,
     updateDownloadDirectory,
+    mimeType,
     onProgress,
     onComplete
 }) => {
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/octet-stream'
-    }
-
     if (Platform.OS === 'web') {
         try {
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/octet-stream'
+            }
             const { fileName } = getDestination(bookInfo)
             const response = await fetch(remoteUrl, { headers })
             const blob = await response.blob()
@@ -137,29 +99,45 @@ const downloadFile = async ({
         return
     }
 
+    let progressSub = null
     try {
         let baseDirUri = downloadDirectory ?? null
 
         if (!baseDirUri) {
-            const permissions = await SAF.requestDirectoryPermissionsAsync()
-            if (!permissions.granted) return
-            baseDirUri = permissions.directoryUri
+            baseDirUri = await Snow.Download.pickDirectory()
+            if (!baseDirUri) return
             updateDownloadDirectory(baseDirUri)
         }
 
         const { fileName, subPath } = getDestination(bookInfo)
         const normalizedFileName = fileName.replace(/:/g, '_')
-        const targetDirUri = await ensureSubdirectory(baseDirUri, subPath)
+        const authUrl = remoteUrl.includes('?') ? `${remoteUrl}&token=${token}` : `${remoteUrl}?token=${token}`
 
-        const safUri = await SAF.createFileAsync(targetDirUri, normalizedFileName, 'application/octet-stream')
-        await downloadToSaf(remoteUrl, safUri, headers, onProgress)
+        if (onProgress) {
+            progressSub = Snow.Download.addProgressListener((event) => {
+                onProgress(event.progress / 100) // Convert 0-100 to 0-1 scale
+            })
+        }
 
-        const ledger = await readLedger()
-        await writeLedger({ ...ledger, [bookInfo.id]: makeLedgerEntry(bookInfo, safUri) })
+        const res = await Snow.Download.download({
+            url: authUrl,
+            fileName: normalizedFileName,
+            isTemp: false,
+            treeUri: baseDirUri,
+            subDir: subPath,
+            mimeType: mimeType || 'application/octet-stream',
+            openAfterDownload: false
+        })
 
-        onComplete?.(safUri)
+        if (res && res.success) {
+            const ledger = await readLedger()
+            await writeLedger({ ...ledger, [bookInfo.id]: makeLedgerEntry(bookInfo, res.uri) })
+            onComplete?.(res.uri)
+        }
     } catch (error) {
         console.error("Download Error:", error)
+    } finally {
+        progressSub?.remove()
     }
 }
 
