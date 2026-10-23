@@ -1,6 +1,5 @@
 import Snow from '@snowsuite/expo-snowui'
 import C from '../../common'
-const snowuiPackageInfo = require('expo-snowui/package.json')
 
 export default function LibraryListPage(props) {
     const { navPush } = Snow.useSnowContext()
