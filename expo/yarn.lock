@@ -1398,6 +1398,25 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.12.tgz#0cacd3cff047a32936b1ace47ea7c86eaab60a7f"
   integrity sha512-hhyNJ+nbR6ZR7pToHvllEFun9TL0sbL+tk/ON75lo+Xas054uez98qRbsuNt7MBCyZKK4+8Yli/OAGZhmfBZ/g==
 
+"@snowsuite/expo-snowui@^1.8.26":
+  version "1.8.26"
+  resolved "http://beast.9914.us:4873/@snowsuite/expo-snowui/-/expo-snowui-1.8.26.tgz#a63292c589eba76172e7416589b8701d89435bc7"
+  integrity sha512-OVwyMT6lFEIT6snRXpVwi4e9huX1+TFENTlFO33YKDfUmBiGNd9EVhuu+cGTGlJPQ/BIwI2caDzZMiIFxuw8QQ==
+  dependencies:
+    "@sentry/react-native" "^7.11.0"
+    expo "57.0.11"
+    expo-constants "^57.0.9"
+    expo-image "^57.0.2"
+    expo-navigation-bar "^57.0.2"
+    expo-secure-store "^57.0.1"
+    expo-status-bar "^57.0.1"
+    expo-toast "^1.0.3"
+    lodash "^4.18.1"
+    react "19.2.8"
+    react-native "npm:react-native-tvos@0.86.2-0"
+    react-native-uuid "^2.0.4"
+    use-debounce "^10.1.1"
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.6.tgz#7739c232a1fee9b4d3ce8985f314c0c6d33549d7"
@@ -2218,9 +2237,9 @@ expo-modules-jsi@~57.1.0:
   integrity sha512-a5ckeHfnbYfonhcHGkM0EU/a0Keh+/OufXy/HyFS+spr5Ib0N4Oh1ZsSYFQhp5xdOUFkVofKRhfH+VmcccIIpA==
 
 expo-navigation-bar@^57.0.2:
-  version "57.0.2"
-  resolved "https://registry.yarnpkg.com/expo-navigation-bar/-/expo-navigation-bar-57.0.2.tgz#d22ede0b1c9ddb9291417994dbefbd6f21bcf423"
-  integrity sha512-Ufe49dsTZjarA7gMMwwwnNJWpXo+oTyl5Ud0g3lsGVrj2HXjyw9cb9098N8+CoWpjfIa5PghuRYYXrcCrGQIHg==
+  version "57.0.3"
+  resolved "https://registry.yarnpkg.com/expo-navigation-bar/-/expo-navigation-bar-57.0.3.tgz#28d8564335480fe7927d388aa382bdc3864a6a2c"
+  integrity sha512-+9Q/2OQtpYjObmby1EMpFyhfK5LyT/oHD3lfkU6Z9as8f7arq7vGTlAXzYDP+xK2t76g9TFk//zya56vN5CkzA==
   dependencies:
     debug "^4.3.2"
 
@@ -2242,25 +2261,6 @@ expo-sharing@^57.0.8:
     "@expo/config-plugins" "^57.0.9"
     "@expo/config-types" "^57.0.2"
     "@expo/plist" "^0.8.1"
-
-expo-snowui@^1.8.10:
-  version "1.8.11"
-  resolved "https://registry.yarnpkg.com/expo-snowui/-/expo-snowui-1.8.11.tgz#909e73315cfdb23fe62fcc01c0c3fa68f6c21a0e"
-  integrity sha512-t0krjUls+njEYQM88OcBx9a/3aCcgbg6rlLBHOv8gkuHbvXULBMOzcj8EVcLlPX5d9e7j+uNr8s7bow0oObw6g==
-  dependencies:
-    "@sentry/react-native" "^7.11.0"
-    expo "57.0.11"
-    expo-constants "^57.0.9"
-    expo-image "^57.0.2"
-    expo-navigation-bar "^57.0.2"
-    expo-secure-store "^57.0.1"
-    expo-status-bar "^57.0.1"
-    expo-toast "^1.0.3"
-    lodash "^4.18.1"
-    react "19.2.8"
-    react-native "npm:react-native-tvos@0.86.2-0"
-    react-native-uuid "^2.0.4"
-    use-debounce "^10.1.1"
 
 expo-splash-screen@57.0.5:
   version "57.0.5"

@@ -1,4 +1,4 @@
-import Snow from 'expo-snowui'
+import Snow from '@snowsuite/expo-snowui'
 import C from '../../common'
 
 export default function BookDetailsPage(props) {

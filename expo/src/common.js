@@ -13,7 +13,7 @@ import {
 
 import Snow, {
     Image
-} from 'expo-snowui'
+} from '@snowsuite/expo-snowui'
 
 import { useDebouncedCallback } from 'use-debounce';
 

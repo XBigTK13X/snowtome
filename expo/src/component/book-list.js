@@ -1,5 +1,5 @@
 import { useAppContext } from '../app-context'
-import Snow from 'expo-snowui'
+import Snow from '@snowsuite/expo-snowui'
 
 export default function BookList(props) {
     const { navPush, currentRoute } = Snow.useSnowContext()

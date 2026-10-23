@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import { File, Paths } from 'expo-file-system'
-import Snow from 'expo-snowui'
+import Snow from '@snowsuite/expo-snowui'
 
 const LEDGER_KEY = 'download_ledger'
 

@@ -1,6 +1,6 @@
 {
   "name": "snowtome",
-    "version": "1.4.11",
+    "version": "1.4.12",
   "scripts": {
     "start": "EXPO_TV=1 expo start",
     "android": "EXPO_TV=1 expo run:android",
@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/metro-runtime": "57.0.8",
     "@sentry/react-native": "7.11.0",
+    "@snowsuite/expo-snowui": "^1.8.26",
     "axios": "1.19.0",
     "expo": "57.0.11",
     "expo-build-properties": "57.0.9",
@@ -20,7 +21,6 @@
     "expo-linking": "57.0.5",
     "expo-secure-store": "^57.0.1",
     "expo-sharing": "^57.0.8",
-    "expo-snowui": "^1.8.10",
     "expo-splash-screen": "57.0.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",

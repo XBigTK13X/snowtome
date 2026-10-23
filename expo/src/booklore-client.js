@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import Snow from 'expo-snowui'
+import Snow from '@snowsuite/expo-snowui'
 
 import cache from './cache'
 

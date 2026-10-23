@@ -1,4 +1,4 @@
-import Snow from 'expo-snowui'
+import Snow from '@snowsuite/expo-snowui'
 import BookListPage from './template/book-list-page'
 
 export default function AuthorDetailsPage(props) {
