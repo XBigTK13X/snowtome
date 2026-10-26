@@ -4,7 +4,6 @@ import Snow from '@snowsuite/expo-snowui'
 
 import { config } from './settings'
 import { routes } from './routes'
-import { View } from 'react-native'
 import { BookloreClient } from './booklore-client'
 
 const AppContext = React.createContext({

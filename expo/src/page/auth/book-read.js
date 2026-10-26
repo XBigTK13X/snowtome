@@ -223,9 +223,8 @@ function ZoomableImage({ children }) {
     )
 }
 
-function ReaderModalContent({ bookId, onNextPage, onPreviousPage }) {
+function ReaderModalContent({ bookId, bookloreClient, onNextPage, onPreviousPage }) {
     const { useHubState, sendHubData } = Snow.useSnowContext()
-    const { bookloreClient } = C.useAppContext()
 
     const pagesInfo = useHubState((state) => state?.pagesInfo)
     const pageNumber = useHubState((state) => state?.pageNumber) || 1
@@ -233,7 +232,7 @@ function ReaderModalContent({ bookId, onNextPage, onPreviousPage }) {
     const showCount = useHubState((state) => state?.showCount) || false
     const showPagePicker = useHubState((state) => state?.showPagePicker) || false
 
-    if (!pagesInfo) {
+    if (!pagesInfo || !bookloreClient) {
         return (
             <C.View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
                 <Snow.Header center>Loading pages...</Snow.Header>
@@ -394,17 +393,19 @@ export default function BookDetailsPage(props) {
             bookId
         })
 
-        bookloreClient.getCbzPagesInfo(bookId).then((response) => {
-            sendHubData({
-                pagesInfo: response,
-                maxPageNumber: response?.length || 1
-            }, 'reader.pagesLoaded')
-        })
+        if (bookloreClient && bookId) {
+            bookloreClient.getCbzPagesInfo(bookId).then((response) => {
+                sendHubData({
+                    pagesInfo: response,
+                    maxPageNumber: response?.length || 1
+                }, 'reader.pagesLoaded')
+            })
+        }
 
         return () => {
             resetHub(initialReaderHubState)
         }
-    }, [bookId])
+    }, [bookId, bookloreClient])
 
     C.React.useEffect(() => {
         const actionListenerKey = addActionListener('book-pages', {
@@ -435,6 +436,7 @@ export default function BookDetailsPage(props) {
                 return (
                     <ReaderModalContent
                         bookId={bookId}
+                        bookloreClient={bookloreClient}
                         onNextPage={onNextPage}
                         onPreviousPage={onPreviousPage}
                     />
@@ -445,7 +447,7 @@ export default function BookDetailsPage(props) {
         return () => {
             popModal()
         }
-    }, [bookId])
+    }, [bookId, bookloreClient])
 
     return null
 }
