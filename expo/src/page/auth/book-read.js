@@ -1,6 +1,6 @@
 import Snow from '@snowsuite/expo-snowui'
 import C from '../../common'
-import { Dimensions, PanResponder, Animated } from 'react-native';
+import { Dimensions, PanResponder, Animated } from 'react-native'
 
 const TAP_BORDER_PERCENT = 0.15
 const SWIPE_THRESHOLD_X = 50
@@ -8,6 +8,16 @@ const SWIPE_THRESHOLD_Y = 80
 const PINCH_RELEASE_THRESHOLD = 300
 const DOUBLE_TAP_THRESHOLD = 300
 const PAGE_TURN_ZOOM_THRESHOLD = 1.15
+
+export const initialReaderHubState = {
+    bookId: null,
+    pagesInfo: null,
+    pageNumber: 1,
+    maxPageNumber: 1,
+    showTwoPages: false,
+    showCount: false,
+    showPagePicker: false
+}
 
 function getDistance(touches) {
     const dx = touches[0].pageX - touches[1].pageX
@@ -213,84 +223,25 @@ function ZoomableImage({ children }) {
     )
 }
 
-export default function BookDetailsPage(props) {
-    const {
-        currentRoute,
-        pushModal,
-        popModal,
-        navPop,
-        addActionListener,
-        removeActionListener,
-        openOverlay,
-        closeOverlay
-    } = Snow.useSnowContext()
-    const {
-        bookloreClient,
-        routes
-    } = C.useAppContext()
+function ReaderModalContent({ bookId, onNextPage, onPreviousPage }) {
+    const { useHubState, sendHubData } = Snow.useSnowContext()
+    const { bookloreClient } = C.useAppContext()
 
-    const didNavPop = C.React.useRef(false)
+    const pagesInfo = useHubState((state) => state?.pagesInfo)
+    const pageNumber = useHubState((state) => state?.pageNumber) || 1
+    const showTwoPages = useHubState((state) => state?.showTwoPages) || false
+    const showCount = useHubState((state) => state?.showCount) || false
+    const showPagePicker = useHubState((state) => state?.showPagePicker) || false
 
-    const safeNavPop = C.React.useCallback(() => {
-        if (didNavPop.current) return
-        didNavPop.current = true
-        navPop()
-    }, [navPop])
-
-    const [pagesInfo, setPagesInfo] = C.React.useState(null)
-    const pagesInfoRef = C.React.useRef(null)
-    const [localUri, setLocalUri] = C.React.useState(null)
-    const { apiClient } = C.useAppContext()
-    const [showTwoPages, setShowTwoPages] = C.React.useState(false)
-    const showTwoPagesRef = C.React.useRef(showTwoPages)
-    const [showCount, setShowCount] = C.React.useState(false)
-    const showCountRef = C.React.useRef(showCount)
-    const [pageNumber, setPageNumber] = C.React.useState(1)
-    const pageNumberRef = C.React.useRef(1)
-    const maxPageNumberRef = C.React.useRef(2)
-    const [showPagePicker, setShowPagePicker] = C.React.useState(false)
-
-    C.React.useEffect(() => {
-        bookloreClient.getCbzPagesInfo(currentRoute.routeParams.bookId).then((response) => {
-            setPagesInfo(response)
-            maxPageNumberRef.current = response.length
-        })
-    }, [])
-
-    C.React.useEffect(() => {
-        showTwoPagesRef.current = showTwoPages
-    }, [showTwoPages])
-
-    C.React.useEffect(() => {
-        showCountRef.current = showCount
-    }, [showCount])
-
-    const nextPage = () => {
-        if (didNavPop.current) return
-        const page = pageNumberRef.current
-        const max = maxPageNumberRef.current
-        const diff = showTwoPagesRef.current ? 2 : 1
-        if (page < max) {
-            pageNumberRef.current += diff
-            setPageNumber(page + diff)
-        } else {
-            safeNavPop()
-        }
+    if (!pagesInfo) {
+        return (
+            <C.View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
+                <Snow.Header center>Loading pages...</Snow.Header>
+            </C.View>
+        )
     }
 
-    const previousPage = () => {
-        if (didNavPop.current) return
-        const page = pageNumberRef.current
-        const diff = showTwoPagesRef.current ? 2 : 1
-        if (page > 1) {
-            pageNumberRef.current -= diff
-            setPageNumber(page - diff)
-        } else {
-            safeNavPop()
-        }
-    }
-
-    const imageSource = bookloreClient.getCbzPageImage(currentRoute.routeParams.bookId, pageNumber, bookloreClient.accessToken)
+    const imageSource = bookloreClient.getCbzPageImage(bookId, pageNumber, bookloreClient.accessToken)
     let images = (
         <C.Image
             style={{
@@ -298,45 +249,43 @@ export default function BookDetailsPage(props) {
                 backgroundColor: 'black'
             }}
             contentFit="contain"
-            source={imageSource} />
+            source={imageSource}
+        />
     )
-    if (showTwoPages) {
-        if (pageNumber + 1 < pagesInfo.length) {
-            const secondImageSource = bookloreClient.getCbzPageImage(currentRoute.routeParams.bookId, pageNumber + 1, bookloreClient.accessToken)
-            images = (
-                <C.View
-                    style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        backgroundColor: "black",
-                    }}
-                >
-                    <C.Image
-                        style={{ flex: 1 }}
-                        contentFit="contain"
-                        source={imageSource}
-                    />
-                    <C.Image
-                        style={{ flex: 1 }}
-                        contentFit="contain"
-                        source={secondImageSource}
-                    />
-                </C.View>
-            )
-        }
+
+    if (showTwoPages && pageNumber + 1 < pagesInfo.length) {
+        const secondImageSource = bookloreClient.getCbzPageImage(bookId, pageNumber + 1, bookloreClient.accessToken)
+        images = (
+            <C.View
+                style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    backgroundColor: 'black',
+                }}
+            >
+                <C.Image
+                    style={{ flex: 1 }}
+                    contentFit="contain"
+                    source={imageSource}
+                />
+                <C.Image
+                    style={{ flex: 1 }}
+                    contentFit="contain"
+                    source={secondImageSource}
+                />
+            </C.View>
+        )
     }
 
     let countDisplay = null
     if (showCount) {
         let displayCurrentCount = pageNumber
-
         if (pageNumber > 2) {
             displayCurrentCount = (2 * pageNumber) - 2
         }
-
         let displayMax = (pagesInfo.length * 2) - 2
         countDisplay = (
-            <C.View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+            <C.View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
                 <Snow.Text style={{ margin: 0, padding: 15, backgroundColor: 'black', color: 'white' }}>
                     {`Page ${displayCurrentCount} of ${displayMax}`}
                 </Snow.Text>
@@ -344,88 +293,159 @@ export default function BookDetailsPage(props) {
         )
     }
 
-    let modalContent = images
-
-    if (!C.isTV) {
-        if (showPagePicker) {
-            modalContent = (
-                <Snow.Grid items={pagesInfo} renderItem={(pageInfo, itemIndex) => {
+    if (!C.isTV && showPagePicker) {
+        return (
+            <C.View style={{ flex: 1, backgroundColor: 'black' }}>
+                {countDisplay}
+                <Snow.Grid items={pagesInfo} renderItem={(pageInfo) => {
                     let pageDisplay = pageInfo?.pageNumber
                     if (pageDisplay > 1) {
                         pageDisplay *= 2
                     }
                     return (
-                        <Snow.TextButton title={pageDisplay} onPress={() => {
-                            pageNumberRef.current = pageInfo?.pageNumber
-                            setPageNumber(pageInfo?.pageNumber)
-                            setShowPagePicker(false)
-                        }} />
+                        <Snow.TextButton
+                            title={pageDisplay}
+                            onPress={() => {
+                                sendHubData({
+                                    pageNumber: pageInfo?.pageNumber,
+                                    showPagePicker: false
+                                }, 'reader.pageSelected')
+                            }}
+                        />
                     )
                 }} />
-            )
-        } else {
-            modalContent = (
-                <>
-                    <ZoomableImage>
-                        <ZoomableImageBinder
-                            onNextPage={nextPage}
-                            onPreviousPage={previousPage}
-                            onSwipeUp={() => setShowPagePicker(true)}
-                            onSwipeDown={() => setShowCount(prev => { return !prev })}
-                        />
-                        {images}
-                    </ZoomableImage>
-                    <C.View style={{ marginTop: 55 }} />
-                </>
-            )
-        }
+            </C.View>
+        )
     }
+
+    return (
+        <C.View style={{ flex: 1, backgroundColor: 'black' }}>
+            {countDisplay}
+            <ZoomableImage>
+                <ZoomableImageBinder
+                    onNextPage={onNextPage}
+                    onPreviousPage={onPreviousPage}
+                    onSwipeUp={() => sendHubData({ showPagePicker: true }, 'reader.openPicker')}
+                    onSwipeDown={() => {
+                        sendHubData((prev) => ({ showCount: !prev?.showCount }), 'reader.toggleCount')
+                    }}
+                />
+                {images}
+            </ZoomableImage>
+            <C.View style={{ marginTop: 55 }} />
+        </C.View>
+    )
+}
+
+export default function BookDetailsPage(props) {
+    const {
+        currentRoute,
+        pushModal,
+        popModal,
+        clearModals,
+        navPop,
+        addActionListener,
+        removeActionListener,
+        getHubState,
+        sendHubData,
+        resetHub
+    } = Snow.useSnowContext()
+
+    const { bookloreClient } = C.useAppContext()
+    const bookId = currentRoute?.routeParams?.bookId
+
+    const didExitRef = C.React.useRef(false)
+
+    const exitReader = C.React.useCallback(() => {
+        if (didExitRef.current) return
+        didExitRef.current = true
+        clearModals?.()
+        navPop?.()
+    }, [clearModals, navPop])
+
+    const onNextPage = C.React.useCallback(() => {
+        const state = getHubState()
+        const page = state?.pageNumber || 1
+        const max = state?.maxPageNumber || 1
+        const step = state?.showTwoPages ? 2 : 1
+
+        if (page < max) {
+            sendHubData({ pageNumber: page + step }, 'reader.nextPage')
+        } else {
+            exitReader()
+        }
+    }, [getHubState, sendHubData, exitReader])
+
+    const onPreviousPage = C.React.useCallback(() => {
+        const state = getHubState()
+        const page = state?.pageNumber || 1
+        const step = state?.showTwoPages ? 2 : 1
+
+        if (page > 1) {
+            sendHubData({ pageNumber: page - step }, 'reader.prevPage')
+        } else {
+            exitReader()
+        }
+    }, [getHubState, sendHubData, exitReader])
+
+    C.React.useEffect(() => {
+        resetHub({
+            ...initialReaderHubState,
+            bookId
+        })
+
+        bookloreClient.getCbzPagesInfo(bookId).then((response) => {
+            sendHubData({
+                pagesInfo: response,
+                maxPageNumber: response?.length || 1
+            }, 'reader.pagesLoaded')
+        })
+
+        return () => {
+            resetHub(initialReaderHubState)
+        }
+    }, [bookId])
 
     C.React.useEffect(() => {
         const actionListenerKey = addActionListener('book-pages', {
-            onRight: () => {
-                nextPage()
-            },
-            onLeft: () => {
-                previousPage()
-            },
+            onRight: () => onNextPage(),
+            onLeft: () => onPreviousPage(),
             onUp: () => {
-                setShowTwoPages(!showTwoPagesRef.current)
+                sendHubData((prev) => ({ showTwoPages: !prev?.showTwoPages }), 'reader.toggleTwoPages')
             },
             onDown: () => {
-                setShowCount(!showCountRef.current)
+                sendHubData((prev) => ({ showCount: !prev?.showCount }), 'reader.toggleCount')
             },
-            onPress: () => {
-                nextPage()
-            }
+            onPress: () => onNextPage(),
+            onBack: () => exitReader()
         })
+
         return () => {
             removeActionListener(actionListenerKey)
         }
-    }, [])
+    }, [onNextPage, onPreviousPage, exitReader, addActionListener, removeActionListener, sendHubData])
 
     C.React.useEffect(() => {
         pushModal({
             props: {
                 assignFocus: false,
-                onRequestClose: () => safeNavPop()
+                onRequestClose: () => exitReader()
             },
             render: () => {
-                if (!pagesInfo) {
-                    return <Snow.Header center>Loading pages...</Snow.Header>
-                }
                 return (
-                    <>
-                        {countDisplay}
-                        {modalContent}
-                    </>
+                    <ReaderModalContent
+                        bookId={bookId}
+                        onNextPage={onNextPage}
+                        onPreviousPage={onPreviousPage}
+                    />
                 )
             }
         })
+
         return () => {
             popModal()
         }
-    }, [pagesInfo, pageNumber, showTwoPages, showCount, showPagePicker])
+    }, [bookId])
 
     return null
 }
