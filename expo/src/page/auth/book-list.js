@@ -3,6 +3,8 @@ import C from '../../common'
 
 export default function BookListPage(props) {
     const { routes, apiClient } = C.useAppContext()
+    const { SnowStyle } = Snow.useSnowContext(props)
+
     const localParams = C.useLocalSearchParams()
     const [bookList, setBookList] = C.React.useState(null)
 
@@ -29,7 +31,7 @@ export default function BookListPage(props) {
                     title = item.name.substring(0, dashIndex)
                 }
                 return <Snow.ImageButton
-                    overlayTitle
+                    overlayTitle={SnowStyle.isTV}
                     title={title}
                     imageSource={thumbnail}
                     onPress={routes.func(routes.bookDetails, { bookId: item.id })} />

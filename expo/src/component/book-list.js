@@ -2,7 +2,7 @@ import { useAppContext } from '../app-context'
 import Snow from '@snowsuite/expo-snowui'
 
 export default function BookList(props) {
-    const { navPush, currentRoute } = Snow.useSnowContext()
+    const { navPush, currentRoute, SnowStyle } = Snow.useSnowContext(props)
     const { bookloreClient, routes, clientVersion } = useAppContext()
     return (
         <Snow.View {...props}>
@@ -15,7 +15,7 @@ export default function BookList(props) {
                     title = `#${seriesNumber} - ${title}`
                 }
                 return <Snow.ImageButton
-                    overlayTitle
+                    overlayTitle={SnowStyle.isTV}
                     title={title}
                     imageUrl={thumbnail}
                     onPress={navPush({

@@ -2,7 +2,7 @@ import Snow from '@snowsuite/expo-snowui'
 import C from '../../common'
 
 export default function SeriesListPage(props) {
-    const { navPush } = Snow.useSnowContext()
+    const { navPush, SnowStyle } = Snow.useSnowContext(props)
     const { routes, bookloreClient } = C.useAppContext()
     const [seriesNames, setSeriesNames] = C.React.useState(null)
     const [seriesBooks, setSeriesBooks] = C.React.useState(null)
@@ -29,7 +29,7 @@ export default function SeriesListPage(props) {
                 let coverId = seriesBooks[seriesName].at(Math.floor(coverSeed * seriesBooks[seriesName].length))
                 const thumbnail = bookloreClient.getBookThumbnail(coverId, bookloreClient.accessToken)
                 return <Snow.ImageButton
-                    overlayTitle
+                    overlayTitle={SnowStyle.isTV}
                     title={seriesName}
                     imageUrl={thumbnail}
                     onPress={navPush({

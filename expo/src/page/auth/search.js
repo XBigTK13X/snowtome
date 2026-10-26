@@ -3,7 +3,7 @@ import { C, useAppContext } from 'snowtome'
 
 export default function SearchPage(props) {
     const { bookloreClient, routes } = useAppContext()
-    const { navPush, currentRoute } = Snow.useSnowContext()
+    const { navPush, currentRoute, SnowStyle } = Snow.useSnowContext(props)
 
     const [queryText, setQueryText] = C.React.useState('')
     const queryTextRef = C.React.useRef(queryText)
@@ -61,7 +61,7 @@ export default function SearchPage(props) {
                                     title = `#${seriesNumber} - ${title}`
                                 }
                                 return <Snow.ImageButton
-                                    overlayTitle
+                                    overlayTitle={SnowStyle.isTV}
                                     title={title}
                                     imageUrl={thumbnail}
                                     onPress={navPush({
