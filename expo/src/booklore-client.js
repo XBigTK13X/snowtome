@@ -342,14 +342,21 @@ export class BookloreClient {
         })
     }
 
-    getBookListBySeries = (seriesName) => {
-        return this.readRemoteIfStale(`series-name-${seriesName}`, () => {
+    getBookListBySeries = (seriesName, sortBy = 'releaseDate') => {
+        return this.readRemoteIfStale(`series-name-${seriesName}-${sortBy}`, () => {
             return this.httpGet("/books")
                 .then((response) => {
                     if (response) {
                         let result = response.filter((item) => {
                             return item?.metadata?.seriesName === seriesName
-                        }).sort(by_series_then_title)
+                        })
+
+                        if (sortBy === 'title') {
+                            result.sort(by_title)
+                        } else {
+                            result.sort(by_series_then_title)
+                        }
+
                         return result
                     }
                     return null

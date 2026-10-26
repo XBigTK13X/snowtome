@@ -12,7 +12,7 @@ export default function BookListPage(props) {
                 setBookList(response)
             })
         }
-    }, [bookloreClient])
+    }, [bookloreClient, props.loadData, currentRoute?.routeParams])
 
     if (!bookList?.length && bookList?.length !== 0) {
         return <Snow.Label center>Loading books...</Snow.Label>
@@ -24,6 +24,7 @@ export default function BookListPage(props) {
 
     return (
         <Snow.View {...props}>
+            {props.renderHeaderControls ? props.renderHeaderControls() : null}
             <C.BookList
                 focusStart
                 bookList={bookList}
