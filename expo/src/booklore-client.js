@@ -5,6 +5,7 @@ import Snow from '@snowsuite/expo-snowui'
 import cache from './cache'
 
 // https://booklore.9914.us/api/v1/swagger-ui/index.html
+// https://booklore.9914.us/api/docs
 
 const by_name = (a, b) => {
     const nameA = a.name.toLowerCase();
@@ -373,28 +374,75 @@ export class BookloreClient {
 
     getShelfList = () => {
         return this.readRemoteIfStale('shelf-list-2', () => {
-            return this.httpGet("/shelves")
-                .then((response) => {
-                    if (response) {
-                        response.sort(by_name);
-                        response = response.filter(x => { return x.name !== 'Favorites' && x.name !== 'Kobo' })
-                        return response
-                    }
+            return Promise.all([
+                this.httpGet("/shelves"),
+                this.getLibraryList()
+            ]).then(async ([shelvesResponse, librariesResponse]) => {
+                if (!shelvesResponse || !librariesResponse) {
                     return null
+                }
+
+                const allowedLibraryIds = new Set(
+                    librariesResponse.map(library => library?.id ?? library?.libraryId)
+                )
+
+                const candidateShelves = shelvesResponse.filter(item => {
+                    return item.name !== 'Favorites' && item.name !== 'Kobo'
                 })
+
+                const shelfChecks = await Promise.all(
+                    candidateShelves.map((shelf) => {
+                        const shelfId = shelf?.id ?? shelf?.shelfId
+                        return this.getBookListByShelfId(shelfId)
+                            .then((books) => {
+                                if (!books || books.length === 0) {
+                                    return null
+                                }
+
+                                const hasAccessibleBook = books.some(book => {
+                                    const bookLibraryId = book?.libraryId ?? book?.library?.id
+                                    return allowedLibraryIds.has(bookLibraryId)
+                                })
+
+                                if (hasAccessibleBook) {
+                                    return shelf
+                                }
+                                return null
+                            })
+                            .catch(() => {
+                                return null
+                            })
+                    })
+                )
+
+                const visibleShelves = shelfChecks.filter(Boolean)
+                visibleShelves.sort(by_name)
+                return visibleShelves
+            })
         })
     }
 
     getBookListByShelfId = (shelfId) => {
         return this.readRemoteIfStale(`book-list-shelf-${shelfId}-3`, () => {
-            return this.httpGet(`/shelves/${shelfId}/books`)
-                .then((response) => {
-                    if (response) {
-                        response.sort(by_title)
-                        return response
-                    }
-                    return null
-                })
+            return Promise.all([
+                this.httpGet(`/shelves/${shelfId}/books`),
+                this.getLibraryList()
+            ]).then(([booksResponse, librariesResponse]) => {
+                if (booksResponse) {
+                    const allowedLibraryIds = new Set(
+                        (librariesResponse || []).map(library => library?.id ?? library?.libraryId)
+                    )
+
+                    const accessibleBooks = booksResponse.filter(book => {
+                        const bookLibraryId = book?.libraryId ?? book?.library?.id
+                        return allowedLibraryIds.has(bookLibraryId)
+                    })
+
+                    accessibleBooks.sort(by_title)
+                    return accessibleBooks
+                }
+                return null
+            })
         })
     }
 

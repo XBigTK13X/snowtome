@@ -3,7 +3,7 @@ import C from '../../common'
 
 export default function LibraryListPage(props) {
     const { navPush } = Snow.useSnowContext()
-    const { config, routes } = C.useAppContext()
+    const { bookloreClient, config, routes, onLogout } = C.useAppContext()
 
     let readerDebug = <Snow.TextButton title='Debug' onPress={navPush({
         path: routes.bookRead,
@@ -27,7 +27,11 @@ export default function LibraryListPage(props) {
                 <Snow.TextButton title='Search' onPress={navPush({ path: routes.search })} />
                 <Snow.TextButton title='New Books' onPress={navPush({ path: routes.recentlyAdded })} />
                 {C.isTV ? null : <Snow.TextButton title='Options' onPress={navPush({ path: routes.options })} />}
-
+            </Snow.Grid>
+            <Snow.Break />
+            <Snow.Text center>Logged in as [{bookloreClient?.username}]</Snow.Text>
+            <Snow.Grid itemsPerRow={1}>
+                <Snow.TextButton title='Logout (Hold)' onLongPress={onLogout} />
             </Snow.Grid>
             <Snow.Version
                 appName="snowtome"
