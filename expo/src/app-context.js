@@ -1,4 +1,5 @@
 import React from 'react'
+import { AppState, View } from 'react-native'
 import Snow from '@snowsuite/expo-snowui'
 
 import { config } from './settings'
@@ -46,6 +47,8 @@ export function AppContextProvider(props) {
     const [downloadDirectory, setDownloadDirectory] = React.useState(null)
     const [clientVersion, setClientVersion] = React.useState(0)
 
+    const appState = React.useRef(AppState.currentState)
+
     const onLogin = (webApiUrl, username, password) => {
         const client = new BookloreClient({
             onApiError,
@@ -55,6 +58,8 @@ export function AppContextProvider(props) {
             password
         })
         client.login(username, password).then((response) => {
+            Snow.saveData('username', username)
+            Snow.saveData('password', password)
             Snow.saveData('bookloreAuth', JSON.stringify({
                 refreshToken: client.refreshToken,
                 accessToken: client.accessToken,
@@ -145,6 +150,23 @@ export function AppContextProvider(props) {
             }
         }
     }, [apiError])
+
+    React.useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                if (booklore) {
+                    refreshClient().catch(() => {
+                        onLogout()
+                    })
+                }
+            }
+            appState.current = nextAppState
+        })
+
+        return () => {
+            subscription.remove()
+        }
+    }, [booklore])
 
     const appContext = {
         config,

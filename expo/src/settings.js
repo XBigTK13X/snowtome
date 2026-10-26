@@ -1,7 +1,7 @@
 class Config {
     constructor() {
-        this.clientVersion = "1.4.12"
-        this.clientBuildDate = "October 22, 2026"
+        this.clientVersion = "1.4.13"
+        this.clientBuildDate = "October 26, 2026"
         this.clientDevBuildNumber = 1
         this.debugSnowUi = false
     }

@@ -128,25 +128,34 @@ export class BookloreClient {
         if (this._heartbeatPromise) {
             return this._heartbeatPromise
         }
-        this._heartbeatPromise = new Promise(resolve => {
-            return this.httpGet("/libraries")
+        this._heartbeatPromise = new Promise((resolve, reject) => {
+            this.httpGet("/libraries")
                 .then(() => {
                     resolve(this)
                 })
-                .catch(() => {
+                .catch((getErr) => {
                     const username = Snow.loadData('username')
                     const password = Snow.loadData('password')
-                    this.login(username, password).then(() => {
-                        Snow.saveData('bookloreAuth', JSON.stringify({
-                            refreshToken: this.refreshToken,
-                            accessToken: this.accessToken,
-                            username,
-                            webApiUrl: this.webApiUrl
-                        }))
-                        this.apiErrorSent = false
-                        this.clearApiError?.()
-                        resolve(this)
-                    })
+
+                    if (!username || !password) {
+                        return reject(getErr)
+                    }
+
+                    this.login(username, password)
+                        .then(() => {
+                            Snow.saveData('bookloreAuth', JSON.stringify({
+                                refreshToken: this.refreshToken,
+                                accessToken: this.accessToken,
+                                username,
+                                webApiUrl: this.webApiUrl
+                            }))
+                            this.apiErrorSent = false
+                            this.clearApiError?.()
+                            resolve(this)
+                        })
+                        .catch((loginErr) => {
+                            reject(loginErr)
+                        })
                 })
         }).finally(() => {
             this._heartbeatPromise = null
