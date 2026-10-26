@@ -37,7 +37,6 @@ export default function SeriesDetailsPage(props) {
                         options={SORT_OPTIONS}
                         onValueChange={(chosenIndex) => {
                             const selectedOption = SORT_OPTIONS[chosenIndex]
-                            console.log({ selectedOption })
                             navPush({
                                 replace: true,
                                 params: {
