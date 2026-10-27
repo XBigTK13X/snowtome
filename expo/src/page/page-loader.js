@@ -36,10 +36,13 @@ const SnowApp = Snow.createSnowApp({
 })
 
 function PageWrapper(props) {
-    const { CurrentPage, currentRoute, SnowStyle, navPush } = Snow.useSnowContext(props)
-    const { refreshClient, routes, bookloreClient, authed, initializing } = useAppContext()
+    const { CurrentPage, currentRoute, bottomPadding, SnowStyle, navPush } = Snow.useSnowContext(props)
+    const { refreshClient, routes, authed, initializing } = useAppContext()
 
-    let appWrapperStyle = { flex: 1, paddingBottom: 50 }
+    let appWrapperStyle = {
+        flex: 1,
+        paddingBottom: 50
+    }
     if (SnowStyle.isPortrait) {
         appWrapperStyle.paddingTop = 50
     }

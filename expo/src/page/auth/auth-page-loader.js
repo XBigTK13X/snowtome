@@ -47,7 +47,6 @@ export default function AuthPageLoader(props) {
         <Snow.View>
             {header}
             <CurrentPage yy={1} key={pageKey} />
-            <Snow.View style={{ marginBottom: 20 }} />
         </Snow.View>
     )
 }

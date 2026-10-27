@@ -30,6 +30,9 @@ const isAndroid = Platform.OS === 'android'
 const isTV = Platform.isTV
 
 import BookList from './component/book-list'
+import BookReaderConstants from './component/book-reader-constants'
+import BookReaderModal from './component/book-reader-modal'
+import ZoomableImage from './component/zoomable-image'
 
 export default {
     cache,
@@ -40,6 +43,10 @@ export default {
     useAppContext,
     useDebouncedCallback,
     util,
+    Snow,
+    BookList,
+    BookReaderConstants,
+    BookReaderModal,
     Image,
     Linking,
     Modal,
@@ -47,6 +54,5 @@ export default {
     ScrollView,
     TouchableOpacity,
     View,
-    BookList,
-    Snow
+    ZoomableImage,
 }

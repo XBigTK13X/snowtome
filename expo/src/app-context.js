@@ -45,6 +45,7 @@ export function AppContextProvider(props) {
     const [initializing, setInitializing] = React.useState(true)
     const [downloadDirectory, setDownloadDirectory] = React.useState(null)
     const [clientVersion, setClientVersion] = React.useState(0)
+    const [bottomPadding, setBottomPadding] = React.useState(0)
 
     const appState = React.useRef(AppState.currentState)
 
@@ -108,6 +109,8 @@ export function AppContextProvider(props) {
                 refreshToken: bookloreAuth.refreshToken
             })
 
+            client.username = bookloreAuth.username
+
             client.heartbeat()
                 .then((freshClient) => {
                     setBooklore(freshClient)
@@ -121,6 +124,13 @@ export function AppContextProvider(props) {
                 })
         } else {
             setInitializing(false)
+        }
+    }, [])
+
+    React.useEffect(() => {
+        let padding = Snow.loadData('bottomPadding')
+        if (padding !== undefined && padding !== null) {
+            setBottomPadding(padding)
         }
     }, [])
 
@@ -167,7 +177,18 @@ export function AppContextProvider(props) {
         }
     }, [booklore])
 
+    const toggleBottomPadding = () => {
+        if (bottomPadding === 0) {
+            setBottomPadding(50)
+            Snow.saveData('bottomPadding', 50)
+        } else {
+            setBottomPadding(0)
+            Snow.saveData('bottomPadding', 0)
+        }
+    }
+
     const appContext = {
+        bottomPadding,
         config,
         clientVersion,
         routes,
@@ -178,6 +199,7 @@ export function AppContextProvider(props) {
         onLogout,
         refreshClient,
         downloadDirectory,
+        toggleBottomPadding,
         updateDownloadDirectory,
     }
 
